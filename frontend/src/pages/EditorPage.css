@@ -1,0 +1,70 @@
+/* EditorPage.css */
+
+/* Override Editor.js default behavior */
+.ce-block__content {
+    max-width: 100%; /* Ensure content block spans full width */
+    padding: 0.5rem; /* Optional: Add padding for better UX */
+  }
+  
+  .ce-toolbar__content {
+    max-width: 100%; /* Toolbar spans full width */
+  }
+  
+  /* Optional: Set custom height and width for the editor */
+  #editorjs {
+    width: 100vw;
+    height: 90vh;  /* Height can be adjusted as necessary */
+    overflow-y: auto; /* Allow vertical scrolling */
+  }
+  
+  .ce-block__content h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .ce-block__content h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.75rem;
+  }
+  
+  .ce-block__content h3 {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  /* EditorJS quote block styling */
+.ce-block__content .ce-quote {
+  font-style: italic;
+  border-left: 4px solid #333;
+  padding-left: 16px;
+  margin: 16px 0;
+  color: #555;
+}
+
+.ce-block__content .ce-quote__text {
+  font-size: 18px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.ce-block__content .ce-quote__caption {
+  font-size: 14px;
+  text-align: right;
+  color: #777;
+}
+.live-preview {
+  max-height: 50%; /* Adjust height to your preference */
+  overflow-y: auto;
+  border-top: 1px solid #ccc;
+  background-color: #f9f9f9;
+  padding: 20px; /* Padding for better spacing */
+}
+
+.preview-content blockquote {
+  padding: 10px;
+  background: #f0f0f0;
+  border-left: 5px solid #333;
+  margin: 10px 0; /* Margin to separate quotes from other content */
+}
