@@ -1,20 +1,20 @@
-import React, { useEffect, useRef } from 'react';
-import EditorJS from '@editorjs/editorjs';
-import Header from '@editorjs/header';
-import List from '@editorjs/list';
-import ImageTool from '@editorjs/image';
-import Paragraph from '@editorjs/paragraph';
-import Quote from '@editorjs/quote';
-import LinkTool from '@editorjs/link';
-import Table from '@editorjs/table';
-import Checklist from '@editorjs/checklist';
-import CodeTool from '@editorjs/code';
-import Delimiter from '@editorjs/delimiter';
-import Embed from '@editorjs/embed';
-import Warning from '@editorjs/warning';
-import Raw from '@editorjs/raw';
-import './EditorPage.css'; 
-import YoutubeEmbed from 'editorjs-youtube-embed';
+import React, { useEffect, useRef } from "react";
+import EditorJS from "@editorjs/editorjs";
+import Header from "@editorjs/header";
+import List from "@editorjs/list";
+import ImageTool from "@editorjs/image";
+import Paragraph from "@editorjs/paragraph";
+import Quote from "@editorjs/quote";
+import LinkTool from "@editorjs/link";
+import Table from "@editorjs/table";
+import Checklist from "@editorjs/checklist";
+import CodeTool from "@editorjs/code";
+import Delimiter from "@editorjs/delimiter";
+import Embed from "@editorjs/embed";
+import Warning from "@editorjs/warning";
+import Raw from "@editorjs/raw";
+import "./EditorPage.css";
+import YoutubeEmbed from "editorjs-youtube-embed";
 
 const EditorPage = () => {
   const editorInstance = useRef(null);
@@ -22,29 +22,59 @@ const EditorPage = () => {
   useEffect(() => {
     // Initialize Editor.js with all tools
     editorInstance.current = new EditorJS({
-      holder: 'editorjs',
-      placeholder: 'Start writing your content...',
+      holder: "editorjs",
+      placeholder: "Start writing your content...",
       autofocus: true,
       tools: {
         header: {
           class: Header,
-          inlineToolbar: true, 
+          inlineToolbar: true,
           config: {
-            placeholder: 'Enter a header',
-            levels: [1, 2, 3], 
-            defaultLevel: 2, 
+            placeholder: "Enter a header",
+            levels: [1, 2, 3],
+            defaultLevel: 2,
           },
         },
         list: List,
         image: {
           class: ImageTool,
           config: {
-            endpoints: {
-              byFile: 'http://localhost:8008/uploadFile', // Your backend file uploader endpoint
-              byUrl: 'http://localhost:8008/fetchUrl', // Your backend URL-based image handler
+            uploader: {
+              uploadByFile(file) {
+                return new Promise((resolve, reject) => {
+                  const formData = new FormData();
+                  formData.append("avatar", file);
+
+                  fetch("http://localhost:3000/api/v1/user/upload", {
+                    method: "POST",
+                    body: formData,
+                  })
+                    .then((response) => response.json())
+                    .then((data) => {
+                      if (data.success) {
+                        // Manually insert the image block after successful upload
+                        // editorInstance.current.blocks.insert("image", {
+                        //   file: {
+                        //     url: data.file.url,
+                        //   },
+                        // });
+
+                        resolve({
+                          success: 1,
+                          file: {
+                            url: data.file.url, // Use the correct URL format here
+                          },
+                        });
+                      } else {
+                        reject("Upload failed");
+                      }
+                    })
+                    .catch((error) => reject(error));
+                });
+              },
             },
           },
-        },
+        },       
         paragraph: {
           class: Paragraph,
           inlineToolbar: true,
@@ -53,14 +83,14 @@ const EditorPage = () => {
           class: Quote,
           inlineToolbar: true,
           config: {
-            quotePlaceholder: 'Enter a quote',
-            captionPlaceholder: 'Quote’s author',
+            quotePlaceholder: "Enter a quote",
+            captionPlaceholder: "Quote’s author",
           },
         },
         linkTool: {
           class: LinkTool,
           config: {
-            endpoint: 'http://localhost:8008/fetchUrl', // Your backend URL-based link handler
+            endpoint: "http://localhost:8008/fetchUrl", // Your backend URL-based link handler
           },
         },
         table: Table,
@@ -71,11 +101,11 @@ const EditorPage = () => {
         warning: {
           class: Warning,
           config: {
-            titlePlaceholder: 'Title',
-            messagePlaceholder: 'Message',
+            titlePlaceholder: "Title",
+            messagePlaceholder: "Message",
           },
         },
-        raw: Raw, 
+        raw: Raw,
         YoutubeEmbed: YoutubeEmbed,
       },
     });
@@ -88,7 +118,7 @@ const EditorPage = () => {
             editorInstance.current.destroy();
           })
           .catch((error) => {
-            console.error('Editor.js cleanup error: ', error);
+            console.error("Editor.js cleanup error: ", error);
           });
       }
     };
@@ -97,7 +127,7 @@ const EditorPage = () => {
   const saveContent = async () => {
     if (editorInstance.current) {
       const content = await editorInstance.current.save();
-      console.log('Editor Content: ', content);
+      console.log("Editor Content: ", content);
       // You can now send the content to your backend or save it to the database
     }
   };
