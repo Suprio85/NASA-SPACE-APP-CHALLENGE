@@ -30,6 +30,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "axios": "^1.7.7",
+    "cors": "^2.8.5",
     "editorjs-inline-image": "^2.2.2",
     "editorjs-youtube-embed": "^1.0.3",
     "react": "^18.3.1",
