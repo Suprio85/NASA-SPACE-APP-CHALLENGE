@@ -1,0 +1,25 @@
+#tooltip {
+    fill: #333333;
+    color: black;
+}
+
+#side_graph {
+    height: 600px;
+}
+
+#bubble_div {
+    background-image: url("bck.jpeg");
+
+}
+
+#description {
+    font-size: 14px;
+    font-weight: 400;
+    padding: 5px;
+}
+
+#planet_year {
+    background-color: #f8f9fc;
+    border: 1px #f8f9fc solid;
+    padding-right: 15px;
+}
