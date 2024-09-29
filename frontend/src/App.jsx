@@ -9,8 +9,14 @@ import ExoplanetPage from './pages/ShowAllPlanet'
 import StarPlanetPage from './pages/ShowAllStars'
 import SolarSystem from './component/animatedSolarSystem'
 import Chatbot from './component/Chatbot'
+import { GoogleOAuthProvider } from '@react-oauth/google'
+
+
 function App() {
+    // console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID)
+
   return (
+    <GoogleOAuthProvider clientId ={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <Router>
       <Navbar />
       <Chatbot/>
@@ -22,10 +28,9 @@ function App() {
         <Route path='/planet' element={<ExoplanetPage/>} />
         <Route path='/stars' element={<StarPlanetPage/>} />
         <Route path='/video' element={<SolarSystem/>} />
-        
       </Routes>
-      
       </Router>
+    </GoogleOAuthProvider>
   )
 }
 

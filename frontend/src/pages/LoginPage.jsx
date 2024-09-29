@@ -1,10 +1,33 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
 import bgImage from '../assets/bg_3.png';
 import planet3 from "../assets/SVG/planet1.svg";
 import planet2 from "../assets/SVG/planet2.svg";
+import {GoogleLogin, googleLogout } from '@react-oauth/google';
 const LogInPage = () => {
+
+    const handleLoginSuccess = (credentialResponse) => {
+        console.log('Logged in:', credentialResponse);
+
+        axios.post('http://localhost:3000/api/auth/google-login', {
+          token: credentialResponse.credential,
+        })
+        .then(response => {
+          console.log(response.data);
+          localStorage.setItem('token', response.data.token);
+        })
+        .catch(error => {
+          console.error('Error logging in:', error);
+        });
+      };
+
+
+
+
+
+
+
+
     return (
         <div className='flex justify-center items-center h-screen absolute top-0 left-0 w-full'>
             <div className='absolute w-full h-screen overflow-hidden -z-40'>
