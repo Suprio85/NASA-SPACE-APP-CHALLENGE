@@ -29,14 +29,14 @@ const SolarSystem = ({ planets, showAnimation }) => {
     return (
         <div className="flex fixed justify-center items-center h-screen   top-0 left-0 w-full z-40">
             <div className="relative">
-                <div className="bg-yellow-500 z-40 rounded-full h-32 w-32 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <div className="bg-yellow-500 rounded-full h-32 w-32 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     <img src={star1}></img>
                 </div>
                 {planets.map((planet, index) => (
                     <div>
                         <div
                             key={index}
-                            className="absolute z-40"
+                            className="absolute "
                             style={{
                                 width: `${(index + 2) * 100}px`,
                                 height: `${(index + 2) * 100}px`,
