@@ -23,6 +23,11 @@ app.use(express.static('public'));
 
 import userRouter from './routes/user.route.js';
 
+import chapterRouter from './routes/chapter.route.js';
+
+
 app.use("/api/v1/user",userRouter);
+
+app.use("/api/v1/chapter",chapterRouter);
 
 export default app;

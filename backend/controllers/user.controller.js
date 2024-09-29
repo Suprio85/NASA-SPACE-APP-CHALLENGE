@@ -6,27 +6,8 @@ const checkroute = asyncHandler(async (req, res) => {
     return res.json(new apiResponse(200, "Welcome to the user route"));
 });
 
-const uploadImage = asyncHandler(async (req, res) => {
-    try {
-        const file = req.files.avatar[0];
-        const localFilePath = file.path;
-
-        const response = await uploadOnCloudinary(localFilePath);
-        if (!response) {
-            return res.json(new apiResponse(500, "Error uploading image to Cloudinary"));
-        }
-
-        return res.json({
-            success: 1,
-            file: {
-                url: response.url 
-            }
-        });
-    } catch (error) {
-        return res.json(new apiResponse(500, "Error uploading image to Cloudinary"));
-    }
-});
 
 
-export { checkroute, uploadImage };
+
+export { checkroute};
 
