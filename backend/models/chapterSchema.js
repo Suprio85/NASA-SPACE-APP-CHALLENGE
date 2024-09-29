@@ -6,10 +6,6 @@ const chapterSchema = new Schema({
         type: String,
         required: [true, "Title is required"],
     },
-    subChapters: [{
-        type: Schema.Types.ObjectId,
-        ref: "SubChapter",
-    }],
     // createdAt is automatically added by timestamps, but you can reference it explicitly
     createdAt: {
         type: Date,
