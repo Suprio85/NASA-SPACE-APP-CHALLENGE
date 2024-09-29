@@ -8,10 +8,12 @@ import JourneyWithorbit from './pages/journeyWithorbit'
 import ExoplanetPage from './pages/ShowAllPlanet'
 import StarPlanetPage from './pages/ShowAllStars'
 import SolarSystem from './component/animatedSolarSystem'
+import Chatbot from './component/Chatbot'
 function App() {
   return (
     <Router>
       <Navbar />
+      <Chatbot/>
       <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/login' element={<LogInPage />} />

@@ -56,8 +56,8 @@ const Chatbot = () => {
     <>
       {!isOpen && (
         <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-4 right-4 bg-blue-500 text-white rounded-full p-4 shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onClick={() =>{console.log("clicked"); setIsOpen(true)}}
+          className="fixed z-50 bottom-4 right-4 bg-blue-500 text-white rounded-full p-4 shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           Chat
         </button>
@@ -65,7 +65,7 @@ const Chatbot = () => {
       <div
         className={`fixed inset-y-0 right-0 w-96 bg-white shadow-lg transform ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
-        } transition-transform duration-300 ease-in-out flex flex-col`}
+        } transition-transform duration-300 ease-in-out flex flex-col z-50`}
       >
         <div className="flex justify-between items-center p-4 border-b">
           <h2 className="text-lg font-semibold">Chatbot</h2>
