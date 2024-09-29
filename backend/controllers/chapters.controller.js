@@ -94,34 +94,53 @@ const addChapter = asyncHandler(async (req, res) => {
 });
 
 const getSubChapters = asyncHandler(async (req, res) => {
-    const { chapterId } = req.body;
+    const { chapterId } = req.body; // Expect chapterId from the request body
+
     try {
-      const subChapters = await SubChapter.find({ chapterId });
-      return res.json(
-        new apiResponse(200, "SubChapters fetched successfully", subChapters)
-      );
+        // Validate chapterId is provided
+        if (!chapterId) {
+            return res.status(400).json(new apiResponse(400, "Chapter ID is required"));
+        }
+
+        // Fetch subchapters by the chapter reference
+        const subChapters = await SubChapter.find({ chapter: chapterId });
+
+        if (!subChapters.length) {
+            return res.status(404).json(new apiResponse(404, "No subchapters found for this chapter"));
+        }
+
+        return res.status(200).json(
+            new apiResponse(200, "SubChapters fetched successfully", subChapters)
+        );
     } catch (error) {
-      console.error("Error fetching subchapters:", error);
-      return res.json(new apiResponse(500, "Error fetching subchapters"));
+        console.error("Error fetching subchapters:", error);
+        return res.status(500).json(new apiResponse(500, "Error fetching subchapters"));
     }
 });
+
 
 const addSubchapters = asyncHandler(async (req, res) => {
     try {
         const { title, chapterId } = req.body;
 
-        // Check if title is provided
-        if (!title) {
-            return res.status(400).json(new apiResponse(400, "Title is required"));
+        // Check if title and chapterId are provided
+        if (!title || !chapterId) {
+            return res.status(400).json(new apiResponse(400, "Title and Chapter ID are required"));
         }
 
-        // Use findOneAndUpdate to either update or create the chapter
+        // Ensure the provided chapterId references an existing Chapter
+        const chapterExists = await Chapter.findById(chapterId);
+        if (!chapterExists) {
+            return res.status(404).json(new apiResponse(404, "Chapter not found"));
+        }
+
+        // Use findOneAndUpdate to either update or create the subchapter
         const savedSubChapter = await SubChapter.findOneAndUpdate(
             { title }, // Search by title
-            { title, chapterId }, // Update the title if the chapter is found
+            { title, chapter: chapterId }, // Update the title and chapter reference
             {
                 new: true,               // Return the updated document
-                upsert: true,            // Create a new chapter if one doesn't exist
+                upsert: true,            // Create a new subchapter if one doesn't exist
                 setDefaultsOnInsert: true // Apply default values when inserting a new document
             }
         );
@@ -132,5 +151,6 @@ const addSubchapters = asyncHandler(async (req, res) => {
         return res.status(500).json(new apiResponse(500, "Error creating/updating subchapter"));
     }
 });
+
 
 export { uploadImage, createSubChapter,getChapters,getSubChapters ,addChapter,addSubchapters};
