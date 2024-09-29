@@ -4,8 +4,7 @@ const { Schema } = mongoose;
 const blogpostSchema = new Schema({
     title: {
         type: String,
-        required: true,
-        message: "Title is required",
+        required: [true,"Title is required"],
     },
     content: {
         type: String,
