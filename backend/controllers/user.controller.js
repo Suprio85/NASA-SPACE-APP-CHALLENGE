@@ -1,5 +1,6 @@
-import { apiResponse } from "../utils/apiResponse.js";
 import asyncHandler from "express-async-handler";
+import  verifyToken  from "../utils/verifyToken.js";
+import generateToken from "../utils/generateToken.js";
 
 const googleLogin = asyncHandler(async (req, res) => {
   const token = req.body.token;
@@ -9,11 +10,21 @@ const googleLogin = asyncHandler(async (req, res) => {
     throw new Error("Invalid token. Google token not found.");
   }
 
+  const user = await verifyToken(token);
 
-  const response = await apiResponse(token);
+  const response = {
+    message: "Google login successful",
+    user: user,
+    token: generateToken(user),
+  };
+
   res.json(response);
 });
 
 
 
-export { checkroute };
+export { googleLogin }
+
+
+
+;
