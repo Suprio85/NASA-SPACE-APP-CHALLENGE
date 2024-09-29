@@ -5,7 +5,19 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      keyframes: {
+        spin: {
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(360deg)' },
+        },
+      },
+      animation: {
+        'spin-slow': 'spin 60s linear infinite',
+        'spin-medium': 'spin 30s linear infinite',
+        'spin-fast': 'spin 10s linear infinite',
+      }
+    },
     fontFamily:{
       bebasNue: ['Bebas Neue'],
       suse: ['SUSE'],
