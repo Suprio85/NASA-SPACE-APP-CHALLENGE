@@ -28,7 +28,7 @@ import userRouter from './routes/user.route.js';
 import chatbotRouter from './routes/chatbot.route.js';
 import { errHandeler } from './middlewares/errorHandler.js';
 
-app.use("/api/v1/user",userRouter);
+app.use("/api/v1/auth",userRouter);
 app.use("/api/v1/chatbot",chatbotRouter);
 
 

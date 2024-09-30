@@ -11,6 +11,9 @@ const verifyToken = asyncHandler(async (token) => {
     audience: process.env.GOOGLE_CLIENT_ID,
   });
   const payload = ticket.getPayload();
+  if (!payload) {
+    throw new Error("Google login failed. Invalid payload.");
+  }
   const user ={
     id: payload.sub,
     email: payload.email,

@@ -10,15 +10,17 @@ import StarPlanetPage from './pages/ShowAllStars'
 import SolarSystem from './component/animatedSolarSystem'
 import Chatbot from './component/Chatbot'
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import { UserProvider } from './contexts/userContext.jsx'
 
 
 function App() {
     // console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID)
-
+ 
   return (
     <GoogleOAuthProvider clientId ={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <UserProvider>
     <Router>
-      <Navbar />
+      <Navbar/>
       <Chatbot/>
       <Routes>
         <Route path='/' element={<HomePage />} />
@@ -30,6 +32,7 @@ function App() {
         <Route path='/video' element={<SolarSystem/>} />
       </Routes>
       </Router>
+      </UserProvider>
     </GoogleOAuthProvider>
   )
 }
