@@ -10,7 +10,8 @@ const TransitSimulation = () => {
   const [brightnessData, setBrightnessData] = useState([]);
   const [starRadius, setStarRadius] = useState(2); // Default star radius
   const [planetRadius, setPlanetRadius] = useState(0.5); // Default planet radius
-  const [orbitRadius, setOrbitRadius] = useState(5); // Default orbit radius
+  const [orbitRadius, setOrbitRadius] = useState(7); // Default orbit radius
+  const [speed, setSpeed] = useState(0.005); // Default speed
 
   // Initialize Three.js Scene
   useEffect(() => {
@@ -26,9 +27,11 @@ const TransitSimulation = () => {
     pointLight.position.set(10, 10, 10);
     scene.add(pointLight);
 
+    // Load starry background texture
     const starTextureLoader = new THREE.TextureLoader();
-    const backgroundTexture = starTextureLoader.load('/stars-bg.jpg');
-    scene.background = backgroundTexture;
+    const backgroundTexture = starTextureLoader.load('../assets/stars.jpg', () => {
+      scene.background = backgroundTexture; // Set the background texture once loaded
+    });
 
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
     camera.position.set(10, 10, 10);
@@ -69,7 +72,6 @@ const TransitSimulation = () => {
     scene.add(orbitPath);
 
     let angle = 0;
-    const speed = 0.01;
     const maxBrightness = 100;
     const brightnessHistory = [];
 
@@ -78,7 +80,7 @@ const TransitSimulation = () => {
 
       controls.update();
 
-      angle += speed;
+      angle += speed; // Use speed state
       // Update planet position based on circular orbit around the star
       planet.position.x = orbitRadius * Math.cos(angle);
       planet.position.z = orbitRadius * Math.sin(angle);
@@ -113,7 +115,7 @@ const TransitSimulation = () => {
       controls.dispose();
       mountRef.current.removeChild(renderer.domElement);
     };
-  }, [starRadius, planetRadius, orbitRadius]);
+  }, [starRadius, planetRadius, orbitRadius, speed]); // Add speed to dependencies
 
   // Data for Light Curve Chart
   const chartData = {
@@ -144,7 +146,7 @@ const TransitSimulation = () => {
         <label className="block text-white">Star Radius: {starRadius}</label>
         <input
           type="range"
-          min="1"
+          min="2" // Minimum star radius set to 2
           max="5"
           step="0.1"
           value={starRadius}
@@ -156,8 +158,8 @@ const TransitSimulation = () => {
         <input
           type="range"
           min="0.1"
-          max="2"
-          step="0.1"
+          max="0.75" // Maximum planet radius set to 0.75
+          step="0.01"
           value={planetRadius}
           onChange={(e) => setPlanetRadius(parseFloat(e.target.value))}
           className="w-full"
@@ -166,11 +168,23 @@ const TransitSimulation = () => {
         <label className="block text-white mt-4">Orbit Radius: {orbitRadius}</label>
         <input
           type="range"
-          min="3"
-          max="10"
+          min="7"
+          max="12"
           step="0.1"
           value={orbitRadius}
           onChange={(e) => setOrbitRadius(parseFloat(e.target.value))}
+          className="w-full"
+        />
+
+        {/* Slider for Speed Control */}
+        <label className="block text-white mt-4">Speed: {speed.toFixed(3)}</label>
+        <input
+          type="range"
+          min="0.001"
+          max="0.1"
+          step="0.001"
+          value={speed}
+          onChange={(e) => setSpeed(parseFloat(e.target.value))}
           className="w-full"
         />
       </div>
