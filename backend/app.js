@@ -1,10 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-<<<<<<< HEAD
 import bodyParser from 'body-parser';
-=======
->>>>>>> simulation
 
 const app = express();
 
@@ -13,10 +10,7 @@ app.use(cors({
     credentials: true
 }))
 
-<<<<<<< HEAD
-=======
 //this is used to parse the incoming request with JSON payloads
->>>>>>> simulation
 app.use(express.json());
 
 //this is used to parse the incoming request with urlencoded payloads to accept reach type of data

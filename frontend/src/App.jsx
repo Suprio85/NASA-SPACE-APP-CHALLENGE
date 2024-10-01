@@ -10,6 +10,9 @@ import StarPlanetPage from './pages/ShowAllStars'
 import SolarSystem from './component/animatedSolarSystem'
 import Planets from "./component/Planets"
 import Chatbot from './component/Chatbot'
+import TeacherBlog from './pages/TeacherBlog'
+import RadialVelocity from './pages/RadialVelocity'
+import TransitSimulator from './pages/TransitSimulation'
 function App() {
   return (
     <Router>
@@ -24,7 +27,9 @@ function App() {
         <Route path='/stars' element={<StarPlanetPage/>} />
         <Route path='/video' element={<SolarSystem/>} />
         <Route path='/test' element={<Planets />} />
-        
+        <Route path='/teacherblog' element={<TeacherBlog />} />
+        <Route path='/radialvelocity' element={<RadialVelocity />} />
+        <Route path='/transitsimulator' element={<TransitSimulator />} />
       </Routes>
     </Router>
   );
