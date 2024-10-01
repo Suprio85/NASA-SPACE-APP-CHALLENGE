@@ -25,8 +25,7 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 
 import userRouter from './routes/user.route.js';
-import chatbotRouter from './routes/chatbot.route.js';
-import chapterRouter from './routes/chapter.route.js';
+import chatbotRouter from './routes/chatbot.route.js';;
 import { errHandeler } from './middlewares/errorHandler.js';
 import chapterRouter from './routes/chapter.route.js';
 
