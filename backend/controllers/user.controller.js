@@ -5,6 +5,7 @@ import User from "../models/userSchema.js";
 import bcrypt from "bcryptjs/dist/bcrypt.js";
 import generatePassword from "../utils/generatePassword.js";
 
+
 const googleLogin = asyncHandler(async (req, res) => {
   const token = req.body.token;
   console.log("Google token:", token);
@@ -111,11 +112,17 @@ const getUserProfile = asyncHandler(async (req, res) => {
     });
 });
 
+const authtest = asyncHandler(async (req, res) => {
+    res.json({
+        message: "You are authorized",
+    });
+});
 
 
 
 
-export { googleLogin,login,register }
+
+export { googleLogin,login,register,getUserProfile,authtest }
 
 
 

@@ -8,6 +8,8 @@ import { useUserContext } from '../contexts/userContext.jsx';
 const Registration = () => {
     const { setUserData } = useUserContext();
 
+    const navigate = useNavigate();
+
 
    const [name, setName] = useState('');
    const [email, setEmail] = useState('');
@@ -43,7 +45,7 @@ const Registration = () => {
                 message: '',
             });
             console.log('Registration successful');
-            useNavigate('/');
+            navigate('/');
         }).catch(error => {
             console.error('Error logging in:', error);
             setError({

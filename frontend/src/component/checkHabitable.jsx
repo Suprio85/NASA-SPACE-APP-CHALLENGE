@@ -16,9 +16,9 @@ const checkDistance = (distance,luminosity) => {
   const innerHabbitable = Math.sqrt(luminosity * 0.95);
   const outerHabbitable = Math.sqrt(luminosity * 1.4);
   console.log("innerHabbitable",innerHabbitable);
-  console.log("outerHabbitable",outerHabbitable+1);
+  console.log("outerHabbitable",outerHabbitable+1.5);
   console.log("distance",distance);
-  return distance >= innerHabbitable && distance <= outerHabbitable+2;
+  return distance >= innerHabbitable && distance <= outerHabbitable+1.5;
 
 
 };
@@ -91,7 +91,7 @@ const Planet = ({ radius, position, name, textureUrl, orbitRadius, temp, luminos
         <meshStandardMaterial color={color} map={texture} emissive={color} emissiveIntensity={luminosity / 10} />
       </mesh>
       <Text
-        position={[0, radius + 0.5, 0]}
+        position={[-5, radius + 0.5, 0]}
         fontSize={0.5}
         color="white"
         anchorX="center"
@@ -201,7 +201,7 @@ const SolarSystem = ({ isAnimated, onHover }) => (
       name="Earth"
       radius={0.3}
       position={isAnimated ? [0, 0, 0] : [0, 0, 0]}
-      textureUrl="https://media.istockphoto.com/id/172208211/photo/earth-map-with-clouds.jpg?s=612x612&w=0&k=20&c=zG2Kh28E2UiW_GdlhE75McrrEFSpH8OGuJKI4zcZW9I="
+      textureUrl="/Textureimg/earth.jpg"
       orbitRadius={isAnimated ? 5 : null}
       temp={288}
       onHover={onHover}
@@ -217,7 +217,7 @@ const ExoplanetSystem = ({ planet, isAnimated, onHover }) => (
       name={planet.name}
       radius={planet.radius * 0.3}
       position={isAnimated ? [planet.distance * 0, 0, 0] : [planet.distance * 0, 0, 0]}
-      textureUrl={`https://cors-anywhere.herokuapp.com/https://www.solarsystemscope.com/textures/download/4k_eris_fictional.jpg`}
+      textureUrl="/Textureimg/exoplanet.jpg"
       orbitRadius={isAnimated ? planet.distance * 2 : null}
       temp={planet.temp}
       luminosity={planet.luminosity}
@@ -226,9 +226,9 @@ const ExoplanetSystem = ({ planet, isAnimated, onHover }) => (
   </group>
 );
 
-const ExoplanetGame3D = () => {
+const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
   const [planet, setPlanet] = useState({
-    name: "Exoplanet",
+    name: "Exoplanet system",
     mass: 1,
     radius: 1,
     temp: 288,
@@ -236,7 +236,7 @@ const ExoplanetGame3D = () => {
     luminosity: 1,
     habitable: false,
   });
-
+  
   const [editablePlanet, setEditablePlanet] = useState({
     mass: planet.mass,
     radius: planet.radius,
@@ -244,11 +244,50 @@ const ExoplanetGame3D = () => {
     distance: planet.distance,
     luminosity: planet.luminosity,
   });
-
   const [isAnimated, setIsAnimated] = useState(false);
   const [verdict, setVerdict] = useState(null);
   const [hoverInfo, setHoverInfo] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const fetchExoplanetData = async () => {
+      try {
+        const response = await fetch(
+          `https://cors-anywhere.herokuapp.com/https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+10+pl_name,disc_year,pl_rade,pl_bmasse,pl_orbper,st_teff,st_lum,pl_eqt,pl_orbsmax,pl_dens,pl_rvamp+from+ps+where+pl_name+=+%27${encodeURIComponent(planetName)}%27&format=json`
+        );
+        const data = await response.json();
+        const planetData = data[0]; // Take the first result
+        // Set null values to default (1)
+        console.log(planetData);
+        setPlanet({
+        name : planetData.pl_name || "Unknown",
+        mass : planetData.pl_bmasse || 1,
+        radius : planetData.pl_rade || 1,
+        temp : planetData.pl_eqt || 288,
+        distance : planetData.pl_orbsmax || 1,
+        luminosity : planetData.st_lum || 1,
+        habitable: false,
+        });//set planet data
+
+
+        setEditablePlanet({
+          name: planetData.pl_name || "Unknown",
+          mass: planetData.pl_bmasse || 1, 
+          radius: planetData.pl_rade || 1, 
+          temp: planetData.pl_eqt || 288, 
+          distance: planetData.pl_orbsmax || 1,
+          luminosity: planetData.st_lum || 1,
+        });
+      } catch (error) {
+        console.error("Failed to fetch exoplanet data:", error);
+      }
+    };
+
+    fetchExoplanetData();
+  }, [planetName]);
+
+
+
 
   const checkHabitability = () => {
     const { radius, temp, distance, luminosity, mass } = editablePlanet;
@@ -346,7 +385,7 @@ const ExoplanetGame3D = () => {
             <label className="block text-sm font-medium text-gray-700">
               Radius (Earth Radii): {editablePlanet.radius.toFixed(2)}
               {editablePlanet.radius < 0.5 && <span className="text-red-500"> - Too small!</span>}
-              {editablePlanet.radius > 2 && <span className="text-red-500"> - Too big!</span>}
+              {editablePlanet.radius > 4 && <span className="text-red-500"> - Too big!</span>}
             </label>
             <input
               type="range"
@@ -362,7 +401,7 @@ const ExoplanetGame3D = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Temperature (K): {editablePlanet.temp}
-              {editablePlanet.temp < 230 && <span className="text-red-500"> - Too cold!</span>}
+              {editablePlanet.temp < 210 && <span className="text-red-500"> - Too cold!</span>}
               {editablePlanet.temp > 340 && <span className="text-red-500"> - Too hot!</span>}
             </label>
             <input
@@ -387,8 +426,8 @@ const ExoplanetGame3D = () => {
               name="distance"
               value={editablePlanet.distance}
               onChange={handleSliderChange}
-              min="0.5"
-              max="10"
+              min="0.6"
+              max="3"
               step="0.01"
               className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
             />
@@ -403,7 +442,7 @@ const ExoplanetGame3D = () => {
               value={editablePlanet.luminosity}
               onChange={handleSliderChange}
               min="0.1"
-              max="10"
+              max="3"
               step="0.1"
               className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
             />
