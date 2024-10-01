@@ -6,13 +6,20 @@ import * as THREE from "three";
 const checkTemp = (temp,luminosity,semiMajorAxis) => {
   const tempFactor = Math.pow(luminosity / Math.pow(semiMajorAxis, 2), 1 / 4);
   const equilibriumTemperature = 278 * tempFactor * Math.pow((1 - 0.3), 1 / 4);
+  console.log(equilibriumTemperature);
+  console.log(temp);
+
   return temp >= equilibriumTemperature - 30 && temp <= equilibriumTemperature + 30;
 };
 
 const checkDistance = (distance,luminosity) => {
   const innerHabbitable = Math.sqrt(luminosity * 0.95);
   const outerHabbitable = Math.sqrt(luminosity * 1.4);
-  return distance >= innerHabbitable && distance <= outerHabbitable;
+  console.log("innerHabbitable",innerHabbitable);
+  console.log("outerHabbitable",outerHabbitable+1);
+  console.log("distance",distance);
+  return distance >= innerHabbitable && distance <= outerHabbitable+2;
+
 
 };
 
@@ -22,7 +29,7 @@ const Verdict = ({ message }) => (
   </div>
 );
 
-const Planet = ({ radius, position, name, textureUrl, orbitRadius, temp, onHover }) => {
+const Planet = ({ radius, position, name, textureUrl, orbitRadius, temp, luminosity, onHover }) => {
   const meshRef = useRef();
   const [texture, setTexture] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -76,12 +83,12 @@ const Planet = ({ radius, position, name, textureUrl, orbitRadius, temp, onHover
         ref={meshRef} 
         onPointerOver={(e) => {
           e.stopPropagation();
-          onHover({ name, radius, temp, distance: orbitRadius / 2 });
+          onHover({ name, radius, temp, distance: orbitRadius / 2, luminosity });
         }}
         onPointerOut={() => onHover(null)}
       >
         <sphereGeometry args={[radius, 64, 64]} />
-        <meshStandardMaterial color={color} map={texture} />
+        <meshStandardMaterial color={color} map={texture} emissive={color} emissiveIntensity={luminosity / 10} />
       </mesh>
       <Text
         position={[0, radius + 0.5, 0]}
@@ -213,6 +220,7 @@ const ExoplanetSystem = ({ planet, isAnimated, onHover }) => (
       textureUrl={`https://cors-anywhere.herokuapp.com/https://www.solarsystemscope.com/textures/download/4k_eris_fictional.jpg`}
       orbitRadius={isAnimated ? planet.distance * 2 : null}
       temp={planet.temp}
+      luminosity={planet.luminosity}
       onHover={onHover}
     />
   </group>
@@ -239,28 +247,22 @@ const ExoplanetGame3D = () => {
 
   const [isAnimated, setIsAnimated] = useState(false);
   const [verdict, setVerdict] = useState(null);
-  const [tooltip, setTooltip] = useState(null);
   const [hoverInfo, setHoverInfo] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   const checkHabitability = () => {
-    const { radius, temp, distance,luminosity,mass } = editablePlanet;
+    const { radius, temp, distance, luminosity, mass } = editablePlanet;
 
-    const isHabtableZone = checkDistance(distance,luminosity);
+    const isHabtableZone = checkDistance(distance, luminosity);
     const isRadiousHabitable = radius >= 0.5 && radius <= 2;
     const isMassHabitable =  mass >= 0.5 && mass <= 10;
-    const isTempHabitable =  checkTemp(temp,luminosity,distance);
-
-
+    const isTempHabitable =  checkTemp(temp, luminosity, distance);
 
     const isHabitable = isHabtableZone && isRadiousHabitable && isMassHabitable && isTempHabitable;
     setPlanet((prevState) => ({ ...prevState, habitable: isHabitable }));
-
-
-
   };
 
-  const handleInputChange = (e) => {
+  const handleSliderChange = (e) => {
     const { name, value } = e.target;
     setEditablePlanet(prevState => ({
       ...prevState,
@@ -269,12 +271,16 @@ const ExoplanetGame3D = () => {
   };
 
   const getVerdict = () => {
-    const { radius, temp, distance,luminosity,mass } = editablePlanet;
+    const { radius, temp, distance, luminosity, mass } = editablePlanet;
 
-    // if()
-
-
-    
+    if(!checkDistance(distance, luminosity)) 
+      return "The exoplanet is not habitable because it is not in the habitable zone.";
+    if (radius < 0.5 || radius > 2)
+      return "The exoplanet is not habitable because its radius is not within the habitable range.";
+    if (mass < 0.5 || mass > 10)
+      return "The exoplanet is not habitable because its mass is not within the habitable range.";
+    if (!checkTemp(temp, luminosity, distance))
+      return "The exoplanet is not habitable because its temperature is not within the habitable range.";
 
     return null;
   };
@@ -316,7 +322,7 @@ const ExoplanetGame3D = () => {
           {verdict && <Verdict message={verdict} />}
           <Canvas camera={{ position: [0, 10, 20] }}>
             <ambientLight intensity={0.2} />
-            <ExoplanetSystem planet={planet} isAnimated={isAnimated} onHover={handlePlanetHover} />
+            <ExoplanetSystem planet={editablePlanet} isAnimated={isAnimated} onHover={handlePlanetHover} />
             <TwinklingStars radius={100} depth={50} count={5000} factor={4} />
             <OrbitControls />
           </Canvas>
@@ -328,75 +334,90 @@ const ExoplanetGame3D = () => {
           <h3 className="font-bold">{hoverInfo.name}</h3>
           <p>Radius: {hoverInfo.radius.toFixed(2)} Earth radii</p>
           <p>Temperature: {hoverInfo.temp}K</p>
-          <p>Distance from star: {hoverInfo.distance} AU</p>
+          <p>Distance from star: {hoverInfo.distance.toFixed(2)} AU</p>
+          <p>Luminosity: {hoverInfo.luminosity} Solar luminosity</p>
         </div>
       )}
 
       <div className="bg-blue-100 p-6 rounded-lg shadow-md relative">
         <h2 className="text-2xl font-semibold mb-4">Exoplanet Parameters</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Radius (Earth Radii):
+              Radius (Earth Radii): {editablePlanet.radius.toFixed(2)}
               {editablePlanet.radius < 0.5 && <span className="text-red-500"> - Too small!</span>}
               {editablePlanet.radius > 2 && <span className="text-red-500"> - Too big!</span>}
             </label>
             <input
-              type="number"
+              type="range"
               name="radius"
               value={editablePlanet.radius}
-              onChange={handleInputChange}
-              step="0.1"
+              onChange={handleSliderChange}
               min="0.1"
-              max="3"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              title={tooltip}
+              max="10"
+              step="0.1"
+              className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Temperature (K):
-              {editablePlanet.temp < 260 && <span className="text-red-500"> - Too cold!</span>}
-              {editablePlanet.temp > 310 && <span className="text-red-500"> - Too hot!</span>}
+              Temperature (K): {editablePlanet.temp}
+              {editablePlanet.temp < 230 && <span className="text-red-500"> - Too cold!</span>}
+              {editablePlanet.temp > 340 && <span className="text-red-500"> - Too hot!</span>}
             </label>
             <input
-              type="number"
+              type="range"
               name="temp"
               value={editablePlanet.temp}
-              onChange={handleInputChange}
-              step="1"
+              onChange={handleSliderChange}
               min="200"
               max="400"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              title={tooltip}
+              step="1"
+              className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Distance from Star (AU):
+              Distance from Star (AU): {editablePlanet.distance.toFixed(2)}
               {editablePlanet.distance < 0.95 && <span className="text-red-500"> - Too close!</span>}
               {editablePlanet.distance > 1.4 && <span className="text-red-500"> - Too far!</span>}
             </label>
             <input
-              type="number"
+              type="range"
               name="distance"
               value={editablePlanet.distance}
-              onChange={handleInputChange}
-              step="0.01"
+              onChange={handleSliderChange}
               min="0.5"
-              max="2"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              title={tooltip}
+              max="10"
+              step="0.01"
+              className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Luminosity (Solar luminosity): {editablePlanet.luminosity.toFixed(2)}
+            </label>
+            <input
+              type="range"
+              name="luminosity"
+              value={editablePlanet.luminosity}
+              onChange={handleSliderChange}
+              min="0.1"
+              max="10"
+              step="0.1"
+              className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+            />
+          </div>
+        </div>
+        <div className="mt-4 flex justify-between">
           <button
-            className="col-span-1 md:col-span-3 mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
             onClick={checkHabitability}
           >
             Check Habitability
           </button>
           <button
-            className="col-span-1 md:col-span-3 mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
             onClick={() => setIsAnimated(!isAnimated)}
           >
             {isAnimated ? "Stop Animation" : "Start Animation"}
