@@ -13,8 +13,17 @@ import Chatbot from './component/Chatbot'
 import TeacherBlog from './pages/TeacherBlog'
 import RadialVelocity from './pages/RadialVelocity'
 import TransitSimulator from './pages/TransitSimulation'
+import Chatbot from './component/Chatbot'
+import { GoogleOAuthProvider } from '@react-oauth/google'
+import { UserProvider } from './contexts/userContext.jsx'
+
+
 function App() {
+    // console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID)
+ 
   return (
+    <GoogleOAuthProvider clientId ={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <UserProvider>
     <Router>
       <Chatbot />
       <Navbar />
@@ -31,8 +40,10 @@ function App() {
         <Route path='/radialvelocity' element={<RadialVelocity />} />
         <Route path='/transitsimulator' element={<TransitSimulator />} />
       </Routes>
-    </Router>
-  );
+      </Router>
+      </UserProvider>
+    </GoogleOAuthProvider>
+  )
 }
 
 export default App;
