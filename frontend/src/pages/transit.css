@@ -1,0 +1,13 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  canvas {
+    display: block;
+  }
+  
+  .bg-black {
+    background-color: #000;
+  }
+  

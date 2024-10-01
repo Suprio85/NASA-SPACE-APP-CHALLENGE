@@ -1,7 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+<<<<<<< HEAD
 import bodyParser from 'body-parser';
+=======
+>>>>>>> simulation
 
 const app = express();
 
@@ -10,6 +13,10 @@ app.use(cors({
     credentials: true
 }))
 
+<<<<<<< HEAD
+=======
+//this is used to parse the incoming request with JSON payloads
+>>>>>>> simulation
 app.use(express.json());
 
 //this is used to parse the incoming request with urlencoded payloads to accept reach type of data
@@ -27,13 +34,11 @@ app.use(express.static('public'));
 import userRouter from './routes/user.route.js';
 import chatbotRouter from './routes/chatbot.route.js';
 import { errHandeler } from './middlewares/errorHandler.js';
+import chapterRouter from './routes/chapter.route.js';
 
 app.use("/api/v1/user",userRouter);
 app.use("/api/v1/chatbot",chatbotRouter);
-
-
+app.use("/api/v1/chapter",chapterRouter);
 app.use(errHandeler);
-
-
 
 export default app;

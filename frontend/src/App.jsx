@@ -26,9 +26,8 @@ function App() {
         <Route path='/test' element={<Planets />} />
         
       </Routes>
-      
-      </Router>
-  )
+    </Router>
+  );
 }
 
-export default App
+export default App;
