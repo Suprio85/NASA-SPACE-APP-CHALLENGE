@@ -17,7 +17,7 @@ const PlanetComparison = ({ planetList ,toggle}) => {
 
     return (
         <div className="bg-slate-950 bg-opacity-90 h-screen w-full flex flex-col justify-center items-center">
-            <div className='bg-slate-950 w-2/3 relative pb-3 pt-10 flex flex-col ring m-4 mb-5'>
+            <div className='bg-slate-950 rounded-lg w-2/3 relative pb-3 pt-10 flex flex-col ring m-4 mb-5'>
                 <div className="absolute top-0 right-0  m-5" onClick={toggle}>
                     <FontAwesomeIcon icon={faXmark} className="text-white cursor-pointer" />
                 </div>
