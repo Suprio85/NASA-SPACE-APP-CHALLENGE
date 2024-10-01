@@ -9,6 +9,7 @@ import char5 from "../assets/SVG/char5.svg";
 import char6 from "../assets/SVG/char6.svg";
 import char7 from "../assets/SVG/char7.svg";
 import char9 from "../assets/SVG/char9.svg";
+import char10 from "../assets/SVG/char10.svg";
 import planet4 from "../assets/SVG/planet4.svg";
 import planet5 from "../assets/SVG/planet5.svg";
 import planet6 from "../assets/SVG/planet6.svg";
@@ -75,10 +76,18 @@ const JourneyWithorbit = () => {
             dir: "ltr",
         },
         {
+            title: "“How We Find Exoplanets”",
+            story: "Orbit floated silently among the stars, his sensors glowing faintly as he scanned the vast expanse of space.\n\n“Finding planets in distant star systems might sound impossible,” he began, a smile flickering on his screen. “But scientists have figured out some pretty amazing ways to discover these hidden worlds.”\n\nHe paused, pointing to a distant star.n\n“Want to know how we find exoplanets—planets that orbit stars far, far away? There are some really cool techniques! From watching stars flicker, to seeing them wobble, to even taking pictures of planets themselves.”\n\nOrbit floated closer, his sensors beeping with excitement.\n\n“But that’s just a glimpse! Click below to expand the story and learn about all the different methods we use to find exoplanets. It’s a journey full of discovery and wonder!”",
+            image: char10,
+            dir: "rtl",
+            buttontext: "Discovery Methods",
+            Linkto: "/howwefindexoplanets"
+        },
+        {
             title: "“The Future of Exoplanet Exploration”",
             story: "Orbit’s sensors buzzed with anticipation as he looked out across the vast universe.\n\n“Our adventure doesn’t end here, fellow explorer. There are so many more exoplanets waiting to be discovered. With new telescopes like the James Webb Space Telescope, we’ll soon be able to study these planets in even more detail.”\n\nOrbit glowed brightly.\n\n“The search for life, for new worlds, for distant planets, has only just begun. And who knows? Maybe one day, we’ll visit these worlds ourselves!”\n\nOrbit smiled as he prepared for the next big discovery, knowing that the universe is full of endless possibilities.",
             image: char7,
-            dir: "rtl",
+            dir: "ltr",
         },
     ];
 

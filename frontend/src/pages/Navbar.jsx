@@ -4,13 +4,13 @@ import { useState } from 'react';
 
 const Navbar = () => {
     return (
-        <div className='flex  justify-between items-center h-16  text-slate-300 font-Saira '>
+        <div className='flex  justify-between items-center h-16  text-slate-300 font-Saira ' style={{zIndex:'10000'}}>
             <div className='pl-8'>
                 <Link to='/'>
-                    <h1 className='text-3xl z-50 font-bold fixed top-5 right-10'>Orbit</h1>
+                    <h1 className='text-3xl  font-bold fixed top-5 right-10' style={{zIndex:'10000'}}>Orbit</h1>
                 </Link>
             </div>
-            <div className='mt-5 z-50 fixed text-2xl right-10 top-12 flex flex-col justify-end items-end'>
+            <div className='mt-5  fixed text-2xl right-10 top-12 flex flex-col justify-end items-end' style={{zIndex:'10000'}}>
                 <Link to='/login'>
                     <button className=''>Log In</button>
                 </Link>
