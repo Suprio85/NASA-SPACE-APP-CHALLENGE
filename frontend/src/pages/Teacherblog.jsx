@@ -203,7 +203,7 @@ const EditorPage = () => {
           </>
         )}
       </div>
-      <EditorComponent onSave={handleSave} />
+      <EditorComponent onSave={handleSave} selectedSubChapterId={selectedSubChapter} />
     </div>
   );
 };

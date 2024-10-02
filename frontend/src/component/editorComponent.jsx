@@ -17,7 +17,7 @@ import Raw from "@editorjs/raw";
 import YoutubeEmbed from "editorjs-youtube-embed";
 import axiosInstance from "../utils/axiosInstance"; // Ensure your axios instance is correctly imported
 
-const EditorComponent = ({ onSave }) => {
+const EditorComponent = ({ onSave, selectedSubChapterId }) => {
   const editorInstance = useRef(null);
 
   useEffect(() => {
@@ -132,7 +132,7 @@ const EditorComponent = ({ onSave }) => {
 
       try {
         const response = await axiosInstance.post('/chapter/create', {
-          title: "Your SubChapter Title", // Replace with actual title or get from user input
+          subChapterId: selectedSubChapterId,
           blocks: content.blocks,
         });
 
