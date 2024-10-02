@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import Button from "../../component/button";
-import transit from "../../assets/SVG/transit.svg";
+import transit from "../../assets/SVG/radialVelocity.png";
 
-import TransitMethod1 from "../../assets/Images/TransitMethod (1).webp";
-import TransitMethod2 from "../../assets/Images/TransitMethod (2).webp";
+import TransitMethod1 from "../../assets/Images/radialVelocity1.png";
+import TransitMethod2 from "../../assets/Images/radialVelocity2.png";
 import WobbleMethodSimulation from "../RadialVelocity";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -75,8 +75,10 @@ const RadialVelocityMethod = () => {
                     </div>
                 </div>) : null
             }
-            <div className="-z-10 absolute right-0  w-full h-96 overflow-hidden flex justify-end">
-                <img src={transit} alt="transit" className="w-1/2 object-cover opacity-50" />
+            <div className="-z-10 absolute right-0  w-full h-96 overflow-hidden  flex justify-end item-center">
+                <div className="w-full flex justify-end items-center">
+                    <img src={transit} alt="transit" className="w-1/2  object-cover opacity-50" />
+                </div>
             </div>
             <div className="mb-20 h-96">
                 <div className="flex justify-between">

@@ -5,8 +5,7 @@ import story_bg_2 from "../../assets/bg_4.png";
 import char2 from "../../assets/SVG/char2.svg";
 import char3 from "../../assets/SVG/char3.svg";
 import directImaging from "../../assets/SVG/directImaging.svg";
-
-
+import radialVelocity from "../../assets/SVG/radialVelocity.svg";
 
 import transit from "../../assets/SVG/transit.svg";
 
@@ -29,7 +28,7 @@ const HowWeFindExoplanets = () => {
         {
             title: "“The Radial Velocity Method – The Star’s Wobble”",
             story: `Orbit’s sensors started to hum as he detected something curious.\n\n“Another way to find exoplanets is by watching for a star’s wobble. You see, planets have gravity too, and as they orbit their star, they tug on it just a little. This tug makes the star wobble back and forth—something we can detect from Earth!”\n\nOrbit demonstrated by wobbling in space.\n\n“When astronomers look at the light coming from a star, they can see a tiny shift caused by this wobble. If a star is moving toward us, its light looks a little bluer. If it’s moving away, it looks redder. This method, called radial velocity, helped find some of the very first exoplanets, like 51 Pegasi b!”`,
-            image: char3, // Add your desired image
+            image: radialVelocity, // Add your desired image
             dir: "ltr",
             buttontext: "Radical Velocity Method",
             Linkto: "/radialvelocitymethod",
@@ -47,8 +46,8 @@ const HowWeFindExoplanets = () => {
             story: `Orbit floated deeper into space, pointing toward a distant star being distorted by a massive object.\n\n“This next method is called Gravitational Microlensing. It’s like using a cosmic magnifying glass! Here’s how it works: when a star or planet passes in front of another star, the gravity of the closer object bends the light of the background star, making it brighter for a short time.”\n\nOrbit mimicked the bending of light around an object.\n\n“If a planet is orbiting the closer star, it bends the light in a special way, revealing its presence. This method helps us find planets that are really far away, but it only works when the timing is just right.”`,
             image: char3, // Add your desired image
             dir: "ltr",
-            buttontext: "",
-            Linkto: "/",
+            buttontext: "Gravitational Microlensing",
+            Linkto: "/GravitationalMicroLensing",
         },
         {
             title: "Astrometry – Measuring the Tiny Shifts",

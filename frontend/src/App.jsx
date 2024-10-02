@@ -20,6 +20,8 @@ import DirectImaging from './pages/differentMethods/DirectImagine'
 import DirectImagingDemo from './pages/DirectImagingSimulation'
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import { OrbitControls, Stars, Environment } from '@react-three/drei';
+import GravitationalMicrolensingSimulation from './pages/GravitationalMicrolensingSimulaton'
+import GravitationalMicroLensing from './pages/differentMethods/GravitationalMicrolensing'
 function App() {
   return (
     <Router>
@@ -34,6 +36,8 @@ function App() {
                 <Route path='/transitmethod' element={<TransitMethod />} /> 
                 <Route path='/radialvelocitymethod' element={<RadialVelocityMethod />} />
                 <Route path='/directimaging' element={<DirectImaging />} />
+                <Route path='/GravitationalMicroLensing' element={<GravitationalMicroLensing />} />
+
         <Route path='/planet' element={<ExoplanetPage />} />
         <Route path='/stars' element={<StarPlanetPage />} />
         <Route path='/video' element={<SolarSystem />} />
@@ -42,6 +46,7 @@ function App() {
         <Route path='/radialvelocity' element={<RadialVelocity />} />
         <Route path='/transitsimulator' element={<TransitSimulator />} />
         <Route path='/directimagingdemo' element={<DirectImagingDemo />} />
+        <Route path='/GravitationalMicrolensingSimulation' element={<GravitationalMicrolensingSimulation />} />
 
       </Routes>
     </Router>

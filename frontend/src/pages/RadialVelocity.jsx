@@ -48,7 +48,7 @@ function StarAndPlanet({
     );
 
     loader.load(
-      'https://cors-anywhere.herokuapp.com/https://img.freepik.com/free-photo/top-view-tie-dye-cloth_23-2148778171.jpg?t=st=1727715841~exp=1727719441~hmac=cf278e693fd37be9944141459c342cbe05dbedd0750af61197e3c78cbe364a8b&w=1380',
+      'https://cors-anywhere.herokuapp.com/https://img.free-photo/top-view-tie-dye-cloth_23-2148778171.jpg?t=st=1727715841~exp=1727719441~hmac=cf278e693fd37be9944141459c342cbe05dbedd0750af61197e3c78cbe364a8b&w=1380',
       (texture) => {
         planetRef.current.material.map = texture;
         planetRef.current.material.needsUpdate = true;
@@ -101,41 +101,44 @@ function StarAndPlanet({
     setMaxShift(starDistance / orbitScaleFactor);
   }, [starDistance, planetDistance, setMaxShift]);
 
-  useFrame(({ clock }) => {
+  useFrame(({ clock, camera }) => {
     const time = clock.getElapsedTime();
     const angle = time * 0.5;
-
+  
     // Orbit movement
     starRef.current.position.x = Math.cos(angle) * starDistance;
     starRef.current.position.y = Math.sin(angle) * starDistance;
-
+  
     planetRef.current.position.x = Math.cos(angle + Math.PI) * planetDistance;
     planetRef.current.position.y = Math.sin(angle + Math.PI) * planetDistance;
-
+  
     // Axial rotation of star and planet
     starRef.current.rotation.y += 0.01; // Star rotates around its Y-axis
     planetRef.current.rotation.y += 0.02; // Planet rotates around its Y-axis
-
+  
+    // Get camera direction and calculate the angle between the camera direction and the Z-axis
     const cameraDirection = new THREE.Vector3();
     camera.getWorldDirection(cameraDirection);
+  
+    // Angle between the camera direction and the normal to the XY plane (the Z-axis)
     const angleToXYPlane = Math.abs(
-      Math.PI / 2 - cameraDirection.angleTo(new THREE.Vector3(0, 0, 1))
+      cameraDirection.angleTo(new THREE.Vector3(0, 0, 1))
     );
-
-    const topViewThreshold = 0.1; // radians
-    if (angleToXYPlane <= topViewThreshold) {
-      // In top view, no shift
-      setShiftFactor(0.5);
+  
+    const topViewThreshold = Math.PI / 6; // Customize the threshold for what is considered "top view"
+    const bottomViewThreshold = Math.PI - topViewThreshold; // Also handle bottom view
+  
+    if (angleToXYPlane <= topViewThreshold || angleToXYPlane >= bottomViewThreshold) {
+      // Looking from the top or bottom view, no shift in the spectrum
+      setShiftFactor(0); // No Doppler shift
     } else {
-      // Calculate radial velocity component
+      // Looking from the side view, apply the shift
       const radialVelocity = Math.sin(angle);
-
-      // Map the radial velocity to a shift factor between 0 and 1
-      const shiftFactor = (radialVelocity + 1) / 2;
-
+      const shiftFactor = (radialVelocity + 1) / 2; // Normalize to [0, 1]
       setShiftFactor(shiftFactor);
     }
   });
+  
 
   return (
     <>
@@ -143,15 +146,15 @@ function StarAndPlanet({
         <lineBasicMaterial attach="material" color="yellow" opacity={0.5} transparent />
       </line>
       <line ref={planetOrbitRef}>
-        <lineBasicMaterial attach="material" color="blue" opacity={0.5} transparent />
+        <lineBasicMaterial attach="material" color="white" opacity={0.5} transparent />
       </line>
       <mesh ref={starRef}>
         <sphereGeometry args={[starSize, 32, 32]} />
-        <meshStandardMaterial map={null} color="yellow" /> {/* Fallback to yellow */}
+        <meshStandardMaterial map={null} color="white" /> {/* Fallback to yellow */}
       </mesh>
       <mesh ref={planetRef}>
         <sphereGeometry args={[planetSize, 32, 32]} />
-        <meshStandardMaterial map={null} color="blue" /> {/* Fallback to blue */}
+        <meshStandardMaterial map={null} color="gray" /> {/* Fallback to blue */}
       </mesh>
     </>
   );
