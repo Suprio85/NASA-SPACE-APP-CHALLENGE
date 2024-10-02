@@ -9,7 +9,6 @@ import ExoplanetPage from './pages/ShowAllPlanet'
 import StarPlanetPage from './pages/ShowAllStars'
 import SolarSystem from './component/animatedSolarSystem'
 import Planets from "./component/Planets"
-import Chatbot from './component/Chatbot'
 import TeacherBlog from './pages/TeacherBlog'
 import RadialVelocity from './pages/RadialVelocity'
 import TransitSimulator from './pages/TransitSimulation'
@@ -22,8 +21,17 @@ import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import { OrbitControls, Stars, Environment } from '@react-three/drei';
 import GravitationalMicrolensingSimulation from './pages/GravitationalMicrolensingSimulaton'
 import GravitationalMicroLensing from './pages/differentMethods/GravitationalMicrolensing'
+import Chatbot from './component/Chatbot'
+import { GoogleOAuthProvider } from '@react-oauth/google'
+import { UserProvider } from './contexts/userContext.jsx'
+
+
 function App() {
+    // console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID)
+ 
   return (
+    <GoogleOAuthProvider clientId ={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <UserProvider>
     <Router>
       <Chatbot />
       <Navbar />
@@ -37,7 +45,6 @@ function App() {
                 <Route path='/radialvelocitymethod' element={<RadialVelocityMethod />} />
                 <Route path='/directimaging' element={<DirectImaging />} />
                 <Route path='/GravitationalMicroLensing' element={<GravitationalMicroLensing />} />
-
         <Route path='/planet' element={<ExoplanetPage />} />
         <Route path='/stars' element={<StarPlanetPage />} />
         <Route path='/video' element={<SolarSystem />} />
@@ -49,8 +56,10 @@ function App() {
         <Route path='/GravitationalMicrolensingSimulation' element={<GravitationalMicrolensingSimulation />} />
 
       </Routes>
-    </Router>
-  );
+      </Router>
+      </UserProvider>
+    </GoogleOAuthProvider>
+  )
 }
 
 export default App;

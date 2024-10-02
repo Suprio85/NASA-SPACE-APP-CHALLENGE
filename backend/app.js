@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-
 const app = express();
 
 app.use(cors({
@@ -26,11 +25,11 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 
 import userRouter from './routes/user.route.js';
-import chatbotRouter from './routes/chatbot.route.js';
+import chatbotRouter from './routes/chatbot.route.js';;
 import { errHandeler } from './middlewares/errorHandler.js';
 import chapterRouter from './routes/chapter.route.js';
 
-app.use("/api/v1/user",userRouter);
+app.use("/api/v1/auth",userRouter);
 app.use("/api/v1/chatbot",chatbotRouter);
 app.use("/api/v1/chapter",chapterRouter);
 app.use(errHandeler);
