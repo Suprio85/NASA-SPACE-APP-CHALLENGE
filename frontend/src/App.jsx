@@ -16,6 +16,7 @@ import Chatbot from './component/Chatbot'
 import SubchpaterContent from './pages/SubchpaterContent.jsx'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { UserProvider } from './contexts/userContext.jsx'
+import AddQuiz from './pages/AddQuiz.jsx'
 
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
         <Route path='/radialvelocity' element={<RadialVelocity />} />
         <Route path='/transitsimulator' element={<TransitSimulator />} />
         <Route path='/subchaptercontent' element={<SubchpaterContent />} />
+        <Route path='/addquiz' element={<AddQuiz />} />
       </Routes>
       </Router>
       </UserProvider>
