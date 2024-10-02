@@ -33,4 +33,4 @@ prediction = model.predict(input_data)
 predicted_planet_type = le.inverse_transform([prediction[0]])
 
 # Print the predicted planet type
-print(f'Predicted planet type: {predicted_planet_type[0]}')
+print(f'{predicted_planet_type[0]}')

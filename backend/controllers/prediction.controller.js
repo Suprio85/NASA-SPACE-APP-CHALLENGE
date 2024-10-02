@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 const predictExoplanetType = asyncHandler(async (req, res) => {
     const { mass, radius, orbital, distance } = req.body;
 
-    const pathDir = path.join(__dirname, "..", 'scripts', 'predict.py');
+    const pathDir = path.join(__dirname, "..", 'scripts','ExoplanetTypes', 'predict.py');
     console.log(pathDir);
     
     const pythonProcess = spawn('python', [pathDir, distance, mass, radius, orbital]);
@@ -26,8 +26,6 @@ const predictExoplanetType = asyncHandler(async (req, res) => {
         console.error(`Error: ${data}`);
         errorOccurred = true;
     });
-
-    // When the Python script finishes
     pythonProcess.on('close', (code) => {
         console.log(`Python script exited with code ${code}`);
         
