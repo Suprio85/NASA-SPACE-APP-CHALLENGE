@@ -62,6 +62,30 @@ const updateSubChapter = asyncHandler(async (req, res) => {
   }
 });
 
+const getSubchaptercontent = asyncHandler(async (req, res) => { 
+  try {
+    const { subChapterId } = req.body;
+
+    // Validate subChapterId is provided
+    if (!subChapterId) {
+        return res.status(400).json(new apiResponse(400, "SubChapter ID is required"));
+    }
+
+    // Fetch subchapter by the subchapter reference
+    const subChapter = await SubChapter.findById(subChapterId);
+    if (!subChapter) {
+        return res.status(404).json(new apiResponse(404, "SubChapter not found"));
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, "SubChapter fetched successfully", subChapter)
+    );
+} catch (error) {
+    console.error("Error fetching subchapter:", error);
+    return res.status(500).json(new apiResponse(500, "Error fetching subchapter"));
+}
+});
+
 
 const getChapters = asyncHandler(async (req, res) => {
   try {
@@ -163,4 +187,4 @@ const addSubchapters = asyncHandler(async (req, res) => {
 });
 
 
-export { uploadImage, updateSubChapter,getChapters,getSubChapters ,addChapter,addSubchapters};
+export { uploadImage, updateSubChapter,getChapters,getSubChapters ,addChapter,addSubchapters,getSubchaptercontent};

@@ -1,4 +1,3 @@
-// EditorComponent.js
 import React, { useEffect, useRef } from "react";
 import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
@@ -15,29 +14,32 @@ import Embed from "@editorjs/embed";
 import Warning from "@editorjs/warning";
 import Raw from "@editorjs/raw";
 import YoutubeEmbed from "editorjs-youtube-embed";
-import axiosInstance from "../utils/axiosInstance"; // Ensure your axios instance is correctly imported
+import axiosInstance from "../utils/axiosInstance"; 
 
 const EditorComponent = ({ onSave, selectedSubChapterId }) => {
   const editorInstance = useRef(null);
 
   useEffect(() => {
-    // Initialize Editor.js with all tools
-    editorInstance.current = new EditorJS({
-      holder: "editorjs",
-      placeholder: "Start writing your content...",
-      autofocus: true,
-      tools: {
-        header: {
-          class: Header,
-          inlineToolbar: true,
-          config: {
-            placeholder: "Enter a header",
-            levels: [1, 2, 3],
-            defaultLevel: 2,
-          },
+    const initializeEditor = async (blocks = []) => {
+      editorInstance.current = new EditorJS({
+        holder: "editorjs",
+        placeholder: "Start writing your content...",
+        autofocus: true,
+        data: {
+          blocks, // Load the previous content into the editor
         },
-        list: List,
-        image: {
+        tools: {
+          header: {
+            class: Header,
+            inlineToolbar: true,
+            config: {
+              placeholder: "Enter a header",
+              levels: [1, 2, 3],
+              defaultLevel: 2,
+            },
+          },
+          list: List,
+          image: {
             class: ImageTool,
             config: {
               uploader: {
@@ -45,7 +47,7 @@ const EditorComponent = ({ onSave, selectedSubChapterId }) => {
                   return new Promise((resolve, reject) => {
                     const formData = new FormData();
                     formData.append("avatar", file);
-  
+
                     fetch("http://localhost:3000/api/v1/chapter/upload", {
                       method: "POST",
                       body: formData,
@@ -53,17 +55,10 @@ const EditorComponent = ({ onSave, selectedSubChapterId }) => {
                       .then((response) => response.json())
                       .then((data) => {
                         if (data.success) {
-                          // Manually insert the image block after successful upload
-                          // editorInstance.current.blocks.insert("image", {
-                          //   file: {
-                          //     url: data.file.url,
-                          //   },
-                          // });
-  
                           resolve({
                             success: 1,
                             file: {
-                              url: data.file.url, // Use the correct URL format here
+                              url: data.file.url,
                             },
                           });
                         } else {
@@ -75,41 +70,69 @@ const EditorComponent = ({ onSave, selectedSubChapterId }) => {
                 },
               },
             },
-          },       
-        paragraph: {
-          class: Paragraph,
-          inlineToolbar: true,
-        },
-        quote: {
-          class: Quote,
-          inlineToolbar: true,
-          config: {
-            quotePlaceholder: "Enter a quote",
-            captionPlaceholder: "Quote’s author",
           },
-        },
-        linkTool: {
-          class: LinkTool,
-          config: {
-            endpoint: "http://localhost:8008/fetchUrl", // Your backend URL-based link handler
+          paragraph: {
+            class: Paragraph,
+            inlineToolbar: true,
           },
-        },
-        table: Table,
-        checklist: Checklist,
-        code: CodeTool,
-        delimiter: Delimiter,
-        embed: Embed,
-        warning: {
-          class: Warning,
-          config: {
-            titlePlaceholder: "Title",
-            messagePlaceholder: "Message",
+          quote: {
+            class: Quote,
+            inlineToolbar: true,
+            config: {
+              quotePlaceholder: "Enter a quote",
+              captionPlaceholder: "Quote’s author",
+            },
           },
+          linkTool: {
+            class: LinkTool,
+            config: {
+              endpoint: "http://localhost:8008/fetchUrl", // Your backend URL-based link handler
+            },
+          },
+          table: Table,
+          checklist: Checklist,
+          code: CodeTool,
+          delimiter: Delimiter,
+          embed: Embed,
+          warning: {
+            class: Warning,
+            config: {
+              titlePlaceholder: "Title",
+              messagePlaceholder: "Message",
+            },
+          },
+          raw: Raw,
+          YoutubeEmbed: YoutubeEmbed,
         },
-        raw: Raw,
-        YoutubeEmbed: YoutubeEmbed,
-      },
-    });
+      });
+    };
+
+    // Fetch existing subchapter content when subChapterId is provided
+    const fetchSubChapterContent = async () => {
+      if (selectedSubChapterId) {
+        try {
+          const response = await axiosInstance.post("/chapter/getsubchaptercontent", {
+            subChapterId: selectedSubChapterId,
+          });
+
+          if (response.data && response.data.success) {
+            const { blocks } = response.data.message;
+            console.log("Blocks received:", blocks); // Log to verify the blocks data
+            initializeEditor(blocks); // Initialize the editor with the fetched content
+          } else {
+            console.error("Error fetching subchapter content:", response.data.message);
+            initializeEditor(); // Initialize the editor with empty content in case of error
+          }
+        } catch (error) {
+          console.error("Error fetching subchapter:", error.message);
+          initializeEditor(); // Initialize the editor with empty content in case of error
+        }
+      } else {
+        initializeEditor(); // Initialize the editor with empty content if no subchapterId is provided
+      }
+    };
+
+    fetchSubChapterContent();
 
     // Cleanup editor on component unmount
     return () => {
@@ -123,7 +146,7 @@ const EditorComponent = ({ onSave, selectedSubChapterId }) => {
           });
       }
     };
-  }, []);
+  }, [selectedSubChapterId]);
 
   const saveContent = async () => {
     if (editorInstance.current) {
@@ -131,7 +154,7 @@ const EditorComponent = ({ onSave, selectedSubChapterId }) => {
       console.log("Editor Content: ", content);
 
       try {
-        const response = await axiosInstance.post('/chapter/create', {
+        const response = await axiosInstance.post('/chapter/updatesubchapter', {
           subChapterId: selectedSubChapterId,
           blocks: content.blocks,
         });
