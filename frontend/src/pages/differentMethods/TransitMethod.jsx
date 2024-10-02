@@ -57,14 +57,14 @@ const TransitMethod = () => {
     }
     useEffect(() => {
 
-    },[show])
+    }, [show])
 
     return (
         <div className=" font-Saira absolute top-0 mx-60 mt-20">
             {show ?
-                (<div className="w-full fixed top-0 left-0 z-50">
+                (<div className="w-full fixed top-0 left-0 z-50 flex justify-center">
                     <TransitSimulation show={show} setShow={setShow} />
-                    <div className='fixed bottom-10  w-full z-40 '>
+                    <div className='fixed bottom-10  w-20 z-40 '>
                         <div className='w-full flex justify-center  items-center'>
                             <div className='rounded-full bg-slate-800 w-10 h-10 flex justify-center items-center'>
                                 <button onClick={handleSimulation}>
@@ -73,7 +73,7 @@ const TransitMethod = () => {
                             </div>
                         </div>
                     </div>
-                </div>):null
+                </div>) : null
             }
             <div className="-z-10 absolute right-0  w-full h-96 overflow-hidden flex justify-end">
                 <img src={transit} alt="transit" className="w-1/2 object-cover opacity-50" />
@@ -83,7 +83,7 @@ const TransitMethod = () => {
                     <Title text="Transit Method" />
                 </div>
                 <Text text="The Transit Method is one of the most successful and widely used techniques for detecting exoplanets. It works by detecting the slight dimming of a star’s light when a planet passes in front of it (called a 'transit'), causing a temporary decrease in brightness. This periodic dimming indicates the presence of an exoplanet and provides valuable information about its characteristics." />
-                <div className="mt-10" onClick={handleSimulation}><Button text="Simulate Transit Method" /></div>
+                <div className="mt-10 " onClick={handleSimulation}><Button text="Simulate Transit Method" /></div>
             </div>
 
             <div className="border-2 mb-10 rounded-xl p-3 pt-10 border-opacity-10 border-gray-300 bg-gray-700 bg-opacity-30">

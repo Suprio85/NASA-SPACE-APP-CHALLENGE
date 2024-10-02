@@ -15,6 +15,11 @@ import RadialVelocity from './pages/RadialVelocity'
 import TransitSimulator from './pages/TransitSimulation'
 import HowWeFindExoplanets from './pages/differentMethods/howWeFindExoplanets'
 import TransitMethod from './pages/differentMethods/TransitMethod'
+import RadialVelocityMethod from './pages/differentMethods/RadialVelocityMethod'
+import DirectImaging from './pages/differentMethods/DirectImagine'
+import DirectImagingDemo from './pages/DirectImagingSimulation'
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
+import { OrbitControls, Stars, Environment } from '@react-three/drei';
 function App() {
   return (
     <Router>
@@ -27,6 +32,8 @@ function App() {
         <Route path='/journeywithOrbit' element={<JourneyWithorbit />} />
             <Route path='/howwefindexoplanets/' element={<HowWeFindExoplanets/>} />
                 <Route path='/transitmethod' element={<TransitMethod />} /> 
+                <Route path='/radialvelocitymethod' element={<RadialVelocityMethod />} />
+                <Route path='/directimaging' element={<DirectImaging />} />
         <Route path='/planet' element={<ExoplanetPage />} />
         <Route path='/stars' element={<StarPlanetPage />} />
         <Route path='/video' element={<SolarSystem />} />
@@ -34,6 +41,8 @@ function App() {
         <Route path='/teacherblog' element={<TeacherBlog />} />
         <Route path='/radialvelocity' element={<RadialVelocity />} />
         <Route path='/transitsimulator' element={<TransitSimulator />} />
+        <Route path='/directimagingdemo' element={<DirectImagingDemo />} />
+
       </Routes>
     </Router>
   );

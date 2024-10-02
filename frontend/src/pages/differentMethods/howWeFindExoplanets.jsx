@@ -4,6 +4,7 @@ import story_bg_2 from "../../assets/bg_4.png";
 // import OrbitName from "../../component/orbitName";
 import char2 from "../../assets/SVG/char2.svg";
 import char3 from "../../assets/SVG/char3.svg";
+import directImaging from "../../assets/SVG/directImaging.svg";
 
 
 
@@ -30,16 +31,16 @@ const HowWeFindExoplanets = () => {
             story: `Orbit’s sensors started to hum as he detected something curious.\n\n“Another way to find exoplanets is by watching for a star’s wobble. You see, planets have gravity too, and as they orbit their star, they tug on it just a little. This tug makes the star wobble back and forth—something we can detect from Earth!”\n\nOrbit demonstrated by wobbling in space.\n\n“When astronomers look at the light coming from a star, they can see a tiny shift caused by this wobble. If a star is moving toward us, its light looks a little bluer. If it’s moving away, it looks redder. This method, called radial velocity, helped find some of the very first exoplanets, like 51 Pegasi b!”`,
             image: char3, // Add your desired image
             dir: "ltr",
-            buttontext: "",
-            Linkto: "/",
+            buttontext: "Radical Velocity Method",
+            Linkto: "/radialvelocitymethod",
         },
         {
             title: "“Direct Imaging – A Snapshot of a Distant Planet”",
             story: `Orbit flickered with excitement as he floated through space, gazing at a distant point of light.\n\n“Now, this one’s tricky, but it’s the most direct method—Direct Imaging. That’s when astronomers take an actual picture of a planet!”\n\nHe smiled brightly.\n\n“Sounds simple, right? But it’s super hard! Stars are so bright that planets get lost in their glare. It’s like trying to spot a firefly next to a lighthouse. But with special telescopes and technology, scientists can block out the star’s light and capture an image of the planet itself.”\n\nOrbit blinked, revealing an image of a distant planet.\n\n“This method works best for big planets far from their stars, but every snapshot brings us closer to understanding these distant worlds.”`,
-            image: char3, // Add your desired image
+            image: directImaging, // Add your desired image
             dir: "rtl",
-            buttontext: "",
-            Linkto: "/",
+            buttontext: "Direct Imaging",
+            Linkto: "/directimaging",
         },
         {
             title: "“Gravitational Microlensing – The Cosmic Magnifying Glass”",

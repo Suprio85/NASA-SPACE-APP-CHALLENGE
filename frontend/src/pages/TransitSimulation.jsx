@@ -30,7 +30,7 @@ const TransitSimulation = () => {
     const starsMaterial = new THREE.PointsMaterial({
       color: 0xffffff,
       size: 0.1,
-      sizeAttenuation: true
+      sizeAttenuation: true,
     });
 
     const starsVertices = [];
@@ -41,7 +41,10 @@ const TransitSimulation = () => {
       starsVertices.push(x, y, z);
     }
 
-    starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
+    starsGeometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(starsVertices, 3)
+    );
     const starField = new THREE.Points(starsGeometry, starsMaterial);
     scene.add(starField);
 
@@ -59,19 +62,34 @@ const TransitSimulation = () => {
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
 
+    // Load textures
+    const textureLoader = new THREE.TextureLoader();
+    const sunTexture = textureLoader.load(
+      "https://cors-anywhere.herokuapp.com/https://img.freepik.com/free-photo/top-view-tie-dye-cloth_23-2148778171.jpg?t=st=1727715841~exp=1727719441~hmac=cf278e693fd37be9944141459c342cbe05dbedd0750af61197e3c78cbe364a8b&w=1380"
+    );
+    const planetTexture = textureLoader.load(
+      "https://cors-anywhere.herokuapp.com/https://img.freepik.com/free-photo/creative-abstract-mixed-red-color-painting-with-marble-liquid-effect-panorama_1258-91857.jpg?t=st=1727734167~exp=1727737767~hmac=2cb393e23f1bc8007a46c1901d29b85ac847bdc4b72f0092a5a3b43df4bd0295&w=740"
+    );
+
+    // Sun
     const starGeometry = new THREE.SphereGeometry(starRadius, 32, 32);
-    const starMaterial = new THREE.MeshPhongMaterial({ color: 0xffff00, emissive: 0xffff00, emissiveIntensity: 0.5 });
+    const starMaterial = new THREE.MeshPhongMaterial({
+      map: sunTexture,
+      emissive: 0xffff00,
+      emissiveIntensity: 0.5,
+    });
     const star = new THREE.Mesh(starGeometry, starMaterial);
     scene.add(star);
 
+    // Planet
     const planetGeometry = new THREE.SphereGeometry(planetRadius, 32, 32);
-    const planetMaterial = new THREE.MeshPhongMaterial({ color: 0x0000ff });
+    const planetMaterial = new THREE.MeshPhongMaterial({ map: planetTexture });
     const planet = new THREE.Mesh(planetGeometry, planetMaterial);
     scene.add(planet);
 
+    // Orbit Path
     const orbitPoints = [];
     const orbitSegments = 64;
-
     for (let i = 0; i <= orbitSegments; i++) {
       const theta = (i / orbitSegments) * Math.PI * 2;
       const x = orbitRadius * Math.cos(theta);
@@ -93,6 +111,11 @@ const TransitSimulation = () => {
 
       controls.update();
 
+      // Rotate planet and sun around their own axes
+      planet.rotation.y += 0.01; // Planet rotating on its axis
+      star.rotation.y += 0.005; // Sun rotating on its axis
+
+      // Orbiting motion
       angle += speed;
       planet.position.x = orbitRadius * Math.cos(angle);
       planet.position.z = orbitRadius * Math.sin(angle);
@@ -109,7 +132,9 @@ const TransitSimulation = () => {
       const inTransit = isPlanetBlockingStar;
 
       const planetStarRatio = planetRadius / starRadius;
-      const transit = inTransit ? maxBrightness * (1 - planetStarRatio) : maxBrightness;
+      const transit = inTransit
+        ? maxBrightness * (1 - planetStarRatio)
+        : maxBrightness;
 
       brightnessHistory.push(transit);
 
@@ -145,8 +170,10 @@ const TransitSimulation = () => {
   return (
     <div className="w-full h-screen relative">
       <div ref={mountRef} className="absolute inset-0 w-full"></div>
-      <div className='flex-col rounded-full font-Saira font-bold text-slate-400 text-3xl flex justify-center items-start'>
-        <div className='p-1 rounded-md ml-10 mt-10 font-Titiliuam z-50'>Planetary Systems Simulation</div>
+      <div className="flex-col rounded-full font-Saira font-bold text-slate-400 text-3xl flex justify-center items-start">
+        <div className="p-1 rounded-md ml-10 mt-10 font-Titiliuam z-50">
+          Transit Method Simulation
+        </div>
       </div>
 
       <div className="fixed h-screen w-72 top-0 right-10 flex justify-center items-center">
@@ -155,7 +182,7 @@ const TransitSimulation = () => {
         </div>
       </div>
 
-      <div className="absolute bottom-10 left-10 w-60 bg-opacity-75 rounded-lg">
+      <div className="absolute bottom-10 left-10 w-60 bg-opacity-75 rounded-lg font-semibold">
         <label className="block text-white">Star Radius: {starRadius}</label>
         <input
           type="range"
@@ -198,7 +225,6 @@ const TransitSimulation = () => {
           value={speed}
           onChange={(e) => setSpeed(parseFloat(e.target.value))}
           className="w-full range"
-          
         />
       </div>
     </div>
