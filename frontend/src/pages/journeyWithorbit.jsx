@@ -13,6 +13,7 @@ import char10 from "../assets/SVG/char10.svg";
 import planet4 from "../assets/SVG/planet4.svg";
 import planet5 from "../assets/SVG/planet5.svg";
 import planet6 from "../assets/SVG/planet6.svg";
+import Typist from 'react-typist';
 
 
 import Chapter from "../component/Chapter";
@@ -98,15 +99,36 @@ const JourneyWithorbit = () => {
                     <img src={story_bg_1} alt="story_bg_1" className="" />
                 </div>
                 <div className="flex mx-60 justify-center items-center">
-                    <div className="w-full">
-                        <img src={char2} alt="char2" className="w-3/4" />
+                    <div className="w-1/2">
+                        <img src={char2} alt="char2" className="w-3/4 animate-shake" />
                     </div>
-                    <div className="flex flex-col justify-center items-start text-3xl text-white font-Saira h-screen">
-                        <div className="flex justify-center items-center">
-                            Hey there, space explorers! I’m <div className="w-24 mx-2"><OrbitName /></div>,
-                        </div>
-                        <div>
-                            your guide to the stars. Today, I’m going to tell you a story about exoplanets—planets that exist outside our solar system. Buckle up, because we’re about to embark on an exciting journey across the galaxy!
+                    <div className="flex w-full  flex-col justify-center items-start text-3xl text-white font-Saira h-screen">
+                        <div className="bg-slate-900 h-80 p-8 flex flex-col justify-center items-start rounded-md border-2 border-slate-500 bg-opacity-50 w-full" >
+                            {/* <div className="flex justify-center items-center">
+                                Hey there, space explorers! I’m <div className="w-24 mx-2"><OrbitName /></div>,
+                            </div>
+                            <div>
+                                your guide to the stars. Today, I’m going to tell you a story about exoplanets—planets that exist outside our solar system. Buckle up, because we’re about to embark on an exciting journey across the galaxy!
+                            </div> */}
+                            <div className=" flex justify-normal items-center">
+                                <div className="w-full h-full">
+                                    <Typist avgTypingDelay={30} cursor={{ show: true, blink: true, element: '|', hideWhenDone: true }}>
+                                        <div className="flex justify-start items-center">
+                                            Hey there, space explorers! I’m Orbit
+                                            {/* <span className="w-24 mx-2">
+                                            <OrbitName />
+                                        </span>
+                                        , */}
+                                        </div>
+                                        <Typist.Delay ms={500} /> {/* Optional: Adds a pause before continuing */}
+                                        <div>
+                                            your guide to the stars. Today, I’m going to tell you a story about
+                                            exoplanets—planets that exist outside our solar system. Buckle up,
+                                            because we’re about to embark on an exciting journey across the galaxy!
+                                        </div>
+                                    </Typist>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
