@@ -7,7 +7,7 @@ import joblib
 import pandas as pd
 
 # Select relevant features and target
-features = ['mass_multiplier', 'radius_multiplier', 'orbital_radius']
+features = ['distance','mass_multiplier', 'radius_multiplier', 'orbital_radius']
 target = 'planet_type'
 data = get_data()
 

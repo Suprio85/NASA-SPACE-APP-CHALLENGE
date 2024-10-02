@@ -7,12 +7,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const predictExoplanetType = asyncHandler(async (req, res) => {
-    const { mass, radius, orbital } = req.body;
+    const { mass, radius, orbital, distance } = req.body;
 
     const pathDir = path.join(__dirname, "..", 'scripts', 'predict.py');
     console.log(pathDir);
     
-    const pythonProcess = spawn('python', [pathDir, mass, radius, orbital]);
+    const pythonProcess = spawn('python', [pathDir, distance, mass, radius, orbital]);
 
     let predictionResult = '';
     let errorOccurred = false;
