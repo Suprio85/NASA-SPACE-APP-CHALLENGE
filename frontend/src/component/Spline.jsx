@@ -117,7 +117,7 @@ function SolarSystem({ planets, speed }) {
       <pointLight 
         ref={lightRef}
         position={[0, 0, 0]} 
-        intensity={5.5} 
+        intensity={2.5} 
         distance={100} 
         decay={2}
         color="#FDB813" // Warm, sun-like color
@@ -247,7 +247,7 @@ function ThreeDAnimation({ planets, speed }) {
   return (
     <Canvas style={{ height: '100vh' }}>
       <color attach="background" args={['#000']} />
-      <ambientLight intensity={.3} />
+      <ambientLight intensity={1.3} />
       <directionalLight position={[0, 0, 0]} intensity={1} castShadow>
         <primitive object={new THREE.Object3D()} position={[1, 1, 1]} />
       </directionalLight>
