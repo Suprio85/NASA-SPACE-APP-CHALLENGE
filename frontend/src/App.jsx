@@ -13,6 +13,7 @@ import TeacherBlog from './pages/TeacherBlog'
 import RadialVelocity from './pages/RadialVelocity'
 import TransitSimulator from './pages/TransitSimulation'
 import Chatbot from './component/Chatbot'
+import SubchpaterContent from './pages/SubchpaterContent.jsx'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { UserProvider } from './contexts/userContext.jsx'
 
@@ -38,6 +39,7 @@ function App() {
         <Route path='/teacherblog' element={<TeacherBlog />} />
         <Route path='/radialvelocity' element={<RadialVelocity />} />
         <Route path='/transitsimulator' element={<TransitSimulator />} />
+        <Route path='/subchaptercontent' element={<SubchpaterContent />} />
       </Routes>
       </Router>
       </UserProvider>
