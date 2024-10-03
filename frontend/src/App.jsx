@@ -27,6 +27,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 import { UserProvider } from './contexts/userContext.jsx'
 import AddQuiz from './pages/AddQuiz.jsx'
 import Quiz from './pages/Quiz.jsx'
+import BlogPage from './pages/Blog.jsx'
 
 function App() {
     // console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID)
@@ -59,6 +60,7 @@ function App() {
         <Route path='/subchaptercontent' element={<SubchpaterContent />} />
         <Route path='/addquiz' element={<AddQuiz />} />
         <Route path='/quiz' element={<Quiz />} />
+        <Route path='/blog' element={<BlogPage />} />
       </Routes>
       </Router>
       </UserProvider>

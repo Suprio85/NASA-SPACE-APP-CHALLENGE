@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
@@ -14,10 +14,11 @@ import Embed from "@editorjs/embed";
 import Warning from "@editorjs/warning";
 import Raw from "@editorjs/raw";
 import YoutubeEmbed from "editorjs-youtube-embed";
-import axiosInstance from "../utils/axiosInstance"; 
+import axiosInstance from "../utils/axiosInstance";
 
 const EditorComponent = ({ onSave, selectedSubChapterId }) => {
   const editorInstance = useRef(null);
+  const [title, setTitle] = useState("");
 
   useEffect(() => {
     const initializeEditor = async (blocks = []) => {
@@ -26,7 +27,7 @@ const EditorComponent = ({ onSave, selectedSubChapterId }) => {
         placeholder: "Start writing your content...",
         autofocus: true,
         data: {
-          blocks, // Load the previous content into the editor
+          blocks,
         },
         tools: {
           header: {
@@ -71,22 +72,19 @@ const EditorComponent = ({ onSave, selectedSubChapterId }) => {
               },
             },
           },
-          paragraph: {
-            class: Paragraph,
-            inlineToolbar: true,
-          },
+          paragraph: { class: Paragraph, inlineToolbar: true },
           quote: {
             class: Quote,
             inlineToolbar: true,
             config: {
               quotePlaceholder: "Enter a quote",
-              captionPlaceholder: "Quote’s author",
+              captionPlaceholder: "Quote's author",
             },
           },
           linkTool: {
             class: LinkTool,
             config: {
-              endpoint: "http://localhost:8008/fetchUrl", // Your backend URL-based link handler
+              endpoint: "http://localhost:8008/fetchUrl",
             },
           },
           table: Table,
@@ -107,7 +105,6 @@ const EditorComponent = ({ onSave, selectedSubChapterId }) => {
       });
     };
 
-    // Fetch existing subchapter content when subChapterId is provided
     const fetchSubChapterContent = async () => {
       if (selectedSubChapterId) {
         try {
@@ -117,24 +114,23 @@ const EditorComponent = ({ onSave, selectedSubChapterId }) => {
 
           if (response.data && response.data.success) {
             const { blocks } = response.data.message;
-            console.log("Blocks received:", blocks); // Log to verify the blocks data
-            initializeEditor(blocks); // Initialize the editor with the fetched content
+            console.log("Blocks received:", blocks);
+            initializeEditor(blocks);
           } else {
             console.error("Error fetching subchapter content:", response.data.message);
-            initializeEditor(); // Initialize the editor with empty content in case of error
+            initializeEditor();
           }
         } catch (error) {
           console.error("Error fetching subchapter:", error.message);
-          initializeEditor(); // Initialize the editor with empty content in case of error
+          initializeEditor();
         }
       } else {
-        initializeEditor(); // Initialize the editor with empty content if no subchapterId is provided
+        initializeEditor();
       }
     };
 
     fetchSubChapterContent();
 
-    // Cleanup editor on component unmount
     return () => {
       if (editorInstance.current) {
         editorInstance.current.isReady
@@ -154,23 +150,70 @@ const EditorComponent = ({ onSave, selectedSubChapterId }) => {
       console.log("Editor Content: ", content);
 
       try {
-        const response = await axiosInstance.post('/chapter/updatesubchapter', {
-          subChapterId: selectedSubChapterId,
-          blocks: content.blocks,
-        });
-
-        console.log("SubChapter saved:", response.data); 
+        let response;
+        if (selectedSubChapterId) {
+          response = await axiosInstance.post('/chapter/updatesubchapter', {
+            subChapterId: selectedSubChapterId,
+            blocks: content.blocks,
+          });
+          console.log("SubChapter saved:", response.data);
+        } else {
+          response = await axiosInstance.post('/blog/create', {
+            title,
+            blocks: content.blocks,
+          });
+          console.log("Blog post created:", response.data);
+        }
+        
+        if (onSave) {
+          onSave(response.data);
+        }
       } catch (error) {
-        console.error("Error saving SubChapter:", error.response ? error.response.data : error.message);
+        console.error("Error saving content:", error.response ? error.response.data : error.message);
       }
     }
   };
 
   return (
-    <div>
+    <div className="bg-gray-900 text-white">
+      <style jsx global>{`
+        .codex-editor {
+          color: white;
+        }
+        .ce-block__content, 
+        .ce-toolbar__content {
+          max-width: calc(100% - 80px) !important;
+        }
+        .cdx-block {
+          max-width: 100% !important;
+        }
+        .ce-toolbar__plus,
+        .ce-toolbar__settings-btn {
+          color: white !important;
+          background-color: #4B5563 !important;
+        }
+        .ce-toolbar__plus:hover,
+        .ce-toolbar__settings-btn:hover {
+          background-color: #6B7280 !important;
+        }
+        .codex-editor__redactor {
+          padding-bottom: 100px !important;
+        }
+      `}</style>
+      {!selectedSubChapterId && (
+        <div className="mb-6 p-4 bg-gray-800 rounded-lg shadow-lg">
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter blog post title"
+            className="w-full p-3 text-xl font-bold bg-transparent text-white border-b-2 border-blue-500 focus:outline-none focus:border-blue-300 transition-all duration-300"
+          />
+        </div>
+      )}
       <div
         id="editorjs"
-        className="flex-1 w-full p-20 bg-gray-100 overflow-y-auto"
+        className="flex-1 w-full p-20 overflow-y-auto"
       ></div>
       <button
         onClick={saveContent}
