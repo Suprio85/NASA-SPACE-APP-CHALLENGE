@@ -10,6 +10,6 @@ import Game from './pages/PlanetTypeGame.jsx'
 
 createRoot(document.getElementById('root')).render(
   // <StrictMode>
-    <ExoplanetGame3D />
+    <App />
   // </StrictMode>,
 )

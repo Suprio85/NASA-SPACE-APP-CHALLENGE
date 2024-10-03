@@ -18,7 +18,7 @@ import { UserProvider } from './contexts/userContext.jsx'
 
 
 function App() {
-    // console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID)
+     console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID)
  
   return (
     <GoogleOAuthProvider clientId ={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
