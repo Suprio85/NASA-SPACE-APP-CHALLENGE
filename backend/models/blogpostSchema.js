@@ -10,18 +10,21 @@ const blockSchema = new Schema({
 const blogpostSchema = new Schema({
     title: {
         type: String,
-        required: [true,"Title is required"],
+        required: [true, "Title is required"],
     },
-    author:{
+    author: {
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true,
     },
     blocks: [blockSchema],
     thumbnail: {
-        type: String
-    }
-
+        type: String,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now, 
+    },
 });
 
 const Blogpost = mongoose.model("Blogpost", blogpostSchema);

@@ -48,4 +48,25 @@ function isValidUrl(string) {
   }
 }
 
-export { createBlogpost };
+
+const getAllBlogPosts = async (req, res) => {
+  try {
+    const blogPosts = await Blogpost.find()
+      .populate("author", "name email") // Optional: populate author details
+      .sort({ createdAt: -1 }); // Sort by createdAt in descending order
+
+    res.status(200).json({
+      success: true,
+      count: blogPosts.length,
+      data: blogPosts,
+    });
+  } catch (error) {
+    console.error("Error fetching blog posts:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+export { createBlogpost,getAllBlogPosts };

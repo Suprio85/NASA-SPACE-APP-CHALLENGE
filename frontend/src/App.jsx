@@ -27,7 +27,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 import { UserProvider } from './contexts/userContext.jsx'
 import AddQuiz from './pages/AddQuiz.jsx'
 import Quiz from './pages/Quiz.jsx'
-import BlogPage from './pages/Blog.jsx'
+import BlogPage from './pages/WriteBlog.jsx'
 import TestBlog from './pages/Blogpage.jsx'
 
 function App() {
