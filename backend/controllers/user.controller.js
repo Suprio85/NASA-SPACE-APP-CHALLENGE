@@ -16,9 +16,9 @@ const googleLogin = asyncHandler(async (req, res) => {
 
   const user = await verifyToken(token);
 
-  const existingUser = await User.findOne({ email: user.email });
+  let existingUser = await User.findOne({ email: user.email });
     if (!existingUser){
-        const newUser = new User({
+        existingUser = new User({
             name: user.name,
             email: user.email,
             image_url: user.image_url,
@@ -29,7 +29,7 @@ const googleLogin = asyncHandler(async (req, res) => {
   const response = {
     message: "Google login successful",
     user: user,
-    token: generateToken(user),
+    token: generateToken(existingUser),
   };
 
   res.json(response);

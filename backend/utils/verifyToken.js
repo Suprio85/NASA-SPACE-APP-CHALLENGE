@@ -15,7 +15,7 @@ const verifyToken = asyncHandler(async (token) => {
     throw new Error("Google login failed. Invalid payload.");
   }
   const user ={
-    id: payload.sub,
+    googleId: payload.sub,
     email: payload.email,
     name: payload.name,
     image_url: payload.picture,
