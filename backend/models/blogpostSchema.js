@@ -18,6 +18,9 @@ const blogpostSchema = new Schema({
         required: true,
     },
     blocks: [blockSchema],
+    thumbnail: {
+        type: String
+    }
 
 });
 
