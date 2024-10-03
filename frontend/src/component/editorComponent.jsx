@@ -70,6 +70,29 @@ const EditorComponent = ({ onSave, selectedSubChapterId }) => {
                   });
                 },
               },
+              captionPlaceholder: "Type caption (optional)",
+              actions: [
+                {
+                  name: 'textSize',
+                  icon: '<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M15 5h-4v2h4v8h-4v2h10v-2h-4V5zM5 5v2h4v8H5v2h10v-2h-4V7h4V5H5z"/></svg>',
+                  title: 'Select Text Size',
+                  onClick: (api) => {
+                    const wrapper = api.wrapper;
+                    const captionInput = wrapper.querySelector('.cdx-input');
+                    const select = document.createElement('select');
+                    select.innerHTML = `
+                      <option value="small">Small</option>
+                      <option value="medium" selected>Medium</option>
+                      <option value="large">Large</option>
+                    `;
+                    select.style.marginLeft = '10px';
+                    select.addEventListener('change', (e) => {
+                      captionInput.style.fontSize = e.target.value === 'small' ? '12px' : e.target.value === 'medium' ? '16px' : '20px';
+                    });
+                    wrapper.appendChild(select);
+                  }
+                }
+              ]
             },
           },
           paragraph: { class: Paragraph, inlineToolbar: true },
