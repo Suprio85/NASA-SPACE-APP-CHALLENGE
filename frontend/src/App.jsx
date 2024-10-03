@@ -22,9 +22,11 @@ import { OrbitControls, Stars, Environment } from '@react-three/drei';
 import GravitationalMicrolensingSimulation from './pages/GravitationalMicrolensingSimulaton'
 import GravitationalMicroLensing from './pages/differentMethods/GravitationalMicrolensing'
 import Chatbot from './component/Chatbot'
+import SubchpaterContent from './pages/SubchpaterContent.jsx'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { UserProvider } from './contexts/userContext.jsx'
-
+import AddQuiz from './pages/AddQuiz.jsx'
+import Quiz from './pages/Quiz.jsx'
 
 function App() {
     // console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID)
@@ -54,7 +56,9 @@ function App() {
         <Route path='/transitsimulator' element={<TransitSimulator />} />
         <Route path='/directimagingdemo' element={<DirectImagingDemo />} />
         <Route path='/GravitationalMicrolensingSimulation' element={<GravitationalMicrolensingSimulation />} />
-
+        <Route path='/subchaptercontent' element={<SubchpaterContent />} />
+        <Route path='/addquiz' element={<AddQuiz />} />
+        <Route path='/quiz' element={<Quiz />} />
       </Routes>
       </Router>
       </UserProvider>

@@ -1,40 +1,42 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
-
-const questionSchema = new Schema({
+// Define the quiz schema
+const quizSchema = new Schema({
     question: {
         type: String,
-        required: [true,"Question is required"],
+        required: [true, "Question is required"],
     },
-    options: {
-        type: [String],
-    },
-    correctAnswer: {
+    optionA: {
         type: String,
+        required: [true, "Option A is required"],
     },
-}, {
-    timestamps: true,
-});
-
-const quizSchema = new Schema({
-    title: {
+    optionB: {
         type: String,
-        required: [true,"Title is required"],
+        required: [true, "Option B is required"],
     },
-    subChapter: {
+    optionC: {
+        type: String,
+        required: [true, "Option C is required"],
+    },
+    optionD: {
+        type: String,
+        required: [true, "Option D is required"],
+    },
+    correctAns: {
+        type: String,
+        required: [true, "Correct answer is required"],
+        enum: ['A', 'B', 'C', 'D'], // Enforces correctAns to be one of the options
+    },
+    subchapter: {
         type: Schema.Types.ObjectId,
-        ref: "SubChapter",
+        ref: "SubChapter", // Reference to the SubChapter model
+        required: true,
     },
-    questions: [questionSchema],
-    marks: {
-        type: Number,
-        default: 10,
-    },
-
 }, {
-    timestamps: true,
+    timestamps: true, // Adds createdAt and updatedAt fields
 });
 
+// Create the Quiz model
 const Quiz = mongoose.model("Quiz", quizSchema);
 export default Quiz;
