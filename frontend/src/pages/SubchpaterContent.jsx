@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axiosInstance from "../utils/axiosInstance";
 
 const SubchapterContent = () => {
   const [blocks, setBlocks] = useState([]);
-  const subChapterId = "66f99c78e5ca85e2717f0315"; // Set subchapter id
+  const [sections, setSections] = useState([]);
+  const subChapterId = "66fe37bdf1256c8932d9ef30"; // Subchapter ID
 
-  // Fetch the content of the subchapter
   useEffect(() => {
     const fetchSubChapterContent = async () => {
       try {
@@ -26,30 +26,65 @@ const SubchapterContent = () => {
     fetchSubChapterContent();
   }, [subChapterId]);
 
-  // Function to convert YouTube URL to embeddable URL
-  const getYouTubeEmbedUrl = (url) => {
+  useEffect(() => {
+    const newSections = [];
+    let currentSection = [];
+
+    blocks.forEach((block) => {
+      if (block.type === "delimiter") {
+        if (currentSection.length > 0) {
+          newSections.push(currentSection);
+          currentSection = [];
+        }
+      } else {
+        currentSection.push(block);
+      }
+    });
+
+    if (currentSection.length > 0) {
+      newSections.push(currentSection);
+    }
+
+    setSections(newSections);
+  }, [blocks]);
+
+  const getYouTubeEmbedUrl = useCallback((url) => {
     const videoId = url.split("v=")[1];
     return `https://www.youtube.com/embed/${videoId}`;
-  };
+  }, []);
 
-  // Rendering blocks with styling
-  const renderBlock = (block) => {
+  const renderBlock = useCallback((block, index, isInFlexbox = false) => {
     switch (block.type) {
       case "paragraph":
-        return <p key={block.id} className="mb-4 text-lg">{block.data.text}</p>;
+        return (
+          <p
+            key={block.id}
+            className={`mb-4 text-lg leading-relaxed text-gray-700 ${isInFlexbox ? 'flex-1' : ''}`}
+          >
+            {block.data.text}
+          </p>
+        );
 
       case "header":
+        const headerSizes = {
+          1: "text-4xl",
+          2: "text-3xl",
+          3: "text-2xl",
+          4: "text-xl",
+          5: "text-lg",
+          6: "text-base"
+        };
         return React.createElement(
           `h${block.data.level}`,
-          { key: block.id, className: `text-${block.data.level === 1 ? "3xl" : block.data.level === 2 ? "2xl" : "xl"} font-bold mb-4` },
+          { key: block.id, className: `${headerSizes[block.data.level]} font-bold mb-6 text-gray-800` },
           block.data.text
         );
 
       case "list":
         return (
-          <ul key={block.id} className="list-disc list-inside mb-4">
+          <ul key={block.id} className="list-disc list-inside mb-6 pl-5">
             {block.data.items.map((item, idx) => (
-              <li key={idx} className="text-lg">
+              <li key={`${block.id}-${idx}`} className="text-lg mb-2 text-gray-700">
                 {item}
               </li>
             ))}
@@ -57,18 +92,46 @@ const SubchapterContent = () => {
         );
 
       case "image":
+      case "YoutubeEmbed":
+        const content = block.type === "image" ? (
+          <div className="mb-4">
+            <img
+              src={block.data.file.url}
+              alt={block.data.caption || "Image"}
+              className="rounded-lg shadow-md max-w-full h-auto"
+            />
+            {block.data.caption && (
+              <p className="text-center text-sm text-gray-500 mt-2">{block.data.caption}</p>
+            )}
+          </div>
+        ) : (
+          <div className="mb-4">
+            <iframe
+              width="100%"
+              height="315"
+              src={getYouTubeEmbedUrl(block.data.url)}
+              title="YouTube video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="rounded-lg shadow-md"
+            />
+          </div>
+        );
+
         return (
-          <div key={block.id} className="mb-6">
-            <img src={block.data.file.url} alt={block.data.caption || "Image"} className="w-full rounded" />
-            {block.data.caption && <p className="text-center text-sm text-gray-500 mt-2">{block.data.caption}</p>}
+          <div key={block.id} className={isInFlexbox ? "w-1/2 pr-4" : "mb-8 w-full"}>
+            {content}
           </div>
         );
 
       case "quote":
         return (
-          <blockquote key={block.id} className="border-l-4 border-blue-500 pl-4 italic mb-4">
-            <p className="text-lg">{block.data.text}</p>
-            {block.data.caption && <cite className="text-right text-sm text-gray-500 block">- {block.data.caption}</cite>}
+          <blockquote key={block.id} className="border-l-4 border-blue-500 pl-4 italic mb-6 py-2 bg-blue-50 rounded">
+            <p className="text-lg text-gray-700">{block.data.text}</p>
+            {block.data.caption && (
+              <cite className="text-right text-sm text-gray-500 block mt-2">- {block.data.caption}</cite>
+            )}
           </blockquote>
         );
 
@@ -79,7 +142,7 @@ const SubchapterContent = () => {
             href={block.data.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-500 underline"
+            className="text-blue-600 hover:text-blue-800 underline mb-4 inline-block"
           >
             {block.data.link}
           </a>
@@ -87,28 +150,38 @@ const SubchapterContent = () => {
 
       case "table":
         return (
-          <table key={block.id} className="table-auto border-collapse w-full mb-4">
-            <tbody>
-              {block.data.content.map((row, rowIndex) => (
-                <tr key={rowIndex} className="border-t">
-                  {row.map((cell, cellIndex) => (
-                    <td key={cellIndex} className="border px-4 py-2 text-center">
-                      {cell}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div key={block.id} className="overflow-x-auto mb-6">
+            <table className="min-w-full border-collapse bg-white shadow-sm rounded-lg overflow-hidden">
+              <tbody>
+                {block.data.content.map((row, rowIndex) => (
+                  <tr
+                    key={rowIndex}
+                    className={rowIndex % 2 === 0 ? "bg-gray-50" : "bg-white"}
+                  >
+                    {row.map((cell, cellIndex) => (
+                      <td key={cellIndex} className="border px-4 py-2 text-sm text-gray-700">
+                        {cell}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         );
 
       case "checklist":
         return (
-          <ul key={block.id} className="list-none mb-4">
+          <ul key={block.id} className="list-none mb-6">
             {block.data.items.map((item, idx) => (
-              <li key={idx} className="flex items-center">
-                <input type="checkbox" checked={item.checked} className="mr-2" readOnly />
-                <span>{item.text}</span>
+              <li key={`${block.id}-${idx}`} className="flex items-center mb-2">
+                <input
+                  type="checkbox"
+                  checked={item.checked}
+                  className="mr-2 form-checkbox h-5 w-5 text-blue-600"
+                  readOnly
+                />
+                <span className="text-gray-700">{item.text}</span>
               </li>
             ))}
           </ul>
@@ -116,52 +189,64 @@ const SubchapterContent = () => {
 
       case "code":
         return (
-          <pre key={block.id} className="bg-gray-100 p-4 rounded mb-4">
-            <code>{block.data.code}</code>
+          <pre key={block.id} className="bg-gray-100 p-4 rounded-lg mb-6 overflow-x-auto">
+            <code className="text-sm font-mono">{block.data.code}</code>
           </pre>
         );
 
-      case "delimiter":
-        return <hr key={block.id} className="border-t-2 border-gray-300 my-8" />;
-
       case "warning":
         return (
-          <div key={block.id} className="p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 mb-4">
-            <strong>{block.data.title}</strong>: {block.data.message}
+          <div
+            key={block.id}
+            className="p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 mb-6 rounded-r-lg"
+          >
+            <strong className="font-semibold">{block.data.title}</strong>: {block.data.message}
           </div>
         );
 
       case "raw":
         return (
-          <div key={block.id} className="mb-4">
-            <div dangerouslySetInnerHTML={{ __html: block.data.html }} />
-          </div>
-        );
-
-      case "YoutubeEmbed":
-        return (
           <div key={block.id} className="mb-6">
-            <iframe
-              width="100%"
-              height="315"
-              src={getYouTubeEmbedUrl(block.data.url)}
-              title="YouTube video"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
+            <div dangerouslySetInnerHTML={{ __html: block.data.html }} />
           </div>
         );
 
       default:
         return null;
     }
-  };
+  }, [getYouTubeEmbedUrl]);
+
+  const renderSection = useCallback(
+    (section, index) => {
+      const hasImage = section.some((block) => block.type === "image" || block.type === "YoutubeEmbed");
+
+      if (hasImage) {
+        const imageBlock = section.find((block) => block.type === "image" || block.type === "YoutubeEmbed");
+        const otherBlocks = section.filter((block) => block !== imageBlock);
+
+        return (
+          <div key={index} className="flex flex-wrap mb-8">
+            {renderBlock(imageBlock, 0, true)}
+            <div className="w-1/2 pl-4">
+              {otherBlocks.map((block, idx) => renderBlock(block, idx, true))}
+            </div>
+          </div>
+        );
+      } else {
+        return (
+          <div key={index} className="mb-8">
+            {section.map((block, idx) => renderBlock(block, idx))}
+          </div>
+        );
+      }
+    },
+    [renderBlock]
+  );
 
   return (
-    <div className="p-8 max-w-4xl mx-auto bg-white shadow-md rounded-lg">
-      {blocks.length > 0 ? (
-        blocks.map((block) => renderBlock(block))
+    <div className="p-8 max-w-full mx-auto bg-white shadow-lg rounded-lg">
+      {sections.length > 0 ? (
+        sections.map((section, index) => renderSection(section, index))
       ) : (
         <p className="text-center text-lg text-gray-600">No content available.</p>
       )}

@@ -31,7 +31,76 @@ const EditorComponent = ({ onSave, selectedSubChapterId }) => {
           blocks,
         },
         tools: {
-          // ... (rest of the tools configuration remains the same)
+          header: {
+            class: Header,
+            inlineToolbar: true,
+            config: {
+              placeholder: "Enter a header",
+              levels: [1, 2, 3],
+              defaultLevel: 2,
+            },
+          },
+          list: List,
+          image: {
+            class: ImageTool,
+            config: {
+              uploader: {
+                uploadByFile(file) {
+                  return new Promise((resolve, reject) => {
+                    const formData = new FormData();
+                    formData.append("avatar", file);
+                    fetch("http://localhost:3000/api/v1/chapter/upload", {
+                      method: "POST",
+                      body: formData,
+                    })
+                      .then((response) => response.json())
+                      .then((data) => {
+                        if (data.success) {
+                          resolve({
+                            success: 1,
+                            file: {
+                              url: data.file.url,
+                            },
+                          });
+                        } else {
+                          reject("Upload failed");
+                        }
+                      })
+                      .catch((error) => reject(error));
+                  });
+                },
+              },
+            },
+          },
+          paragraph: { class: Paragraph, inlineToolbar: true },
+          quote: {
+            class: Quote,
+            inlineToolbar: true,
+            config: {
+              quotePlaceholder: "Enter a quote",
+              captionPlaceholder: "Quote's author",
+            },
+          },
+          linkTool: {
+            class: LinkTool,
+            config: {
+              endpoint: "http://localhost:8008/fetchUrl",
+            },
+          },
+          table: Table,
+          checklist: Checklist,
+          code: CodeTool,
+          delimiter: Delimiter,
+          embed: Embed,
+          warning: {
+            class: Warning,
+            config: {
+              titlePlaceholder: "Title",
+              messagePlaceholder: "Message",
+            },
+          },
+          raw: Raw,
+          YoutubeEmbed: YoutubeEmbed,
         },
       });
     };
@@ -104,7 +173,7 @@ const EditorComponent = ({ onSave, selectedSubChapterId }) => {
       try {
         let response;
         if (selectedSubChapterId) {
-          response = await axiosInstance.post('/chapter/updatesubchapter', {
+          response = await axiosInstance.post('/chapter/create', {
             subChapterId: selectedSubChapterId,
             blocks: content.blocks,
             thumbnail,
