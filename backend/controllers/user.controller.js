@@ -23,7 +23,7 @@ const googleLogin = asyncHandler(async (req, res) => {
             email: user.email,
             image_url: user.image_url,
         });
-        await newUser.save();
+        await existingUser.save();
     } 
 
   const response = {

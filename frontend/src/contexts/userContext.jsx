@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+
 const UserContext = createContext();
 
 // Create a provider component
@@ -9,8 +10,13 @@ export const UserProvider = ({ children }) => {
     const token = localStorage.getItem('token');
     const storedUser = localStorage.getItem('userData');
     
-    if (token) {
-      setUserData(JSON.parse(storedUser));
+    if (token && storedUser) {
+      try {
+        setUserData(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Error parsing stored user data:", error);
+        localStorage.removeItem('userData'); // Clean up invalid data
+      }
     }
   }, []);
 
