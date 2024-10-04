@@ -29,32 +29,62 @@ const uploadImage = asyncHandler(async (req, res) => {
   }
 });
 
-const createSubChapter = async (req, res) => {
+const updateSubChapter = asyncHandler(async (req, res) => {
   try {
-    const { title, blocks, chapterId } = req.body;
+    const { blocks, subChapterId } = req.body;
 
-    // Check if all necessary data is provided
-    if (!title || !blocks || !chapterId) {
-      return res.json(new apiResponse(400, "Missing required fields"));
+    // Find the subchapter by ID and update its blocks
+    const updatedSubChapter = await SubChapter.findByIdAndUpdate(
+      subChapterId,
+      { blocks: blocks },
+      { new: true, runValidators: true } // Returns the updated document and runs validators
+    );
+
+    if (!updatedSubChapter) {
+      return res.status(404).json({
+        success: false,
+        message: "SubChapter not found",
+      });
     }
 
-    // Create a new instance of the SubChapter model
-    const newSubChapter = new SubChapter({
-      title,
-      blocks, // Directly assign the blocks array from the frontend
-      chapter: chapterId, // Make sure the chapterId is included for subchapter association
+    // Respond with the updated subchapter
+    return res.status(200).json({
+      success: true,
+      message: "SubChapter updated successfully",
+      data: updatedSubChapter,
     });
-
-    // Save the subchapter to the database
-    const savedSubChapter = await newSubChapter.save();
-
-    // Respond with the saved subchapter
-    return res.json(new apiResponse(201, "SubChapter Created Successfully", savedSubChapter));
   } catch (error) {
-    console.error("Error creating subchapter:", error);
-    return res.json(new apiResponse(500, "Error creating subchapter"));
+    console.error("Error updating subchapter:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
-};
+});
+
+const getSubchaptercontent = asyncHandler(async (req, res) => { 
+  try {
+    const { subChapterId } = req.body;
+
+    // Validate subChapterId is provided
+    if (!subChapterId) {
+        return res.status(400).json(new apiResponse(400, "SubChapter ID is required"));
+    }
+
+    // Fetch subchapter by the subchapter reference
+    const subChapter = await SubChapter.findById(subChapterId);
+    if (!subChapter) {
+        return res.status(404).json(new apiResponse(404, "SubChapter not found"));
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, "SubChapter fetched successfully", subChapter)
+    );
+} catch (error) {
+    console.error("Error fetching subchapter:", error);
+    return res.status(500).json(new apiResponse(500, "Error fetching subchapter"));
+}
+});
 
 
 const getChapters = asyncHandler(async (req, res) => {
@@ -157,4 +187,4 @@ const addSubchapters = asyncHandler(async (req, res) => {
 });
 
 
-export { uploadImage, createSubChapter,getChapters,getSubChapters ,addChapter,addSubchapters};
+export { uploadImage, updateSubChapter,getChapters,getSubChapters ,addChapter,addSubchapters,getSubchaptercontent};
