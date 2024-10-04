@@ -246,8 +246,8 @@ const ExoplanetSystem = ({ planet, isAnimated, onHover }) => {
   const planetRef = useRef();
   const starRef = useRef();
 
-  const innerHabitable = Math.sqrt(planet.luminosity * 0.95) * 2;
-  const outerHabitable = Math.sqrt(planet.luminosity * 1.4) * 2+0.56;
+   const innerHabitable = Math.sqrt(planet.luminosity * 0.95);
+   const outerHabitable = Math.sqrt(planet.luminosity * 1.4)+1.5;
 
   useFrame(({ clock }) => {
     if (isAnimated && planetRef.current) {
@@ -399,11 +399,11 @@ const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
   };
 
   return (
-    <div className="container mx-auto p-4 relative">
+    <div className="container mx-auto p-4 relative h-screen font-Saira">
       <h1 className="text-3xl font-bold mb-4">Exoplanet Habitability Simulator</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 relative">
-        <div className="bg-gray-900 rounded-lg overflow-hidden relative" style={{ height: "400px" }}>
+      <div className="grid grid-cols-1 h-1/2 md:grid-cols-2 gap-4 mb-4 relative">
+        <div className="bg-gray-900 h-full rounded-lg overflow-hidden relative" >
           <Canvas camera={{ position: [0, 10, 20] }}>
             <ambientLight intensity={0.2} />
             <SolarSystem isAnimated={isAnimated} onHover={handlePlanetHover} />
@@ -411,7 +411,7 @@ const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
             <OrbitControls />
           </Canvas>
         </div>
-        <div className="bg-gray-900 rounded-lg overflow-hidden relative" style={{ height: "400px" }}>
+        <div className="bg-gray-900 rounded-lg overflow-hidden relative" >
           {verdict && <Verdict message={verdict} />}
           <Canvas camera={{ position: [0, 10, 20] }}>
             <ambientLight intensity={0.2} />
@@ -432,11 +432,11 @@ const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
         </div>
       )}
 
-      <div className="bg-blue-100 p-6 rounded-lg shadow-md relative">
+      <div className="bg-slate-800 border-slate-600 text-white border-2 p-6 rounded-lg shadow-md relative">
         <h2 className="text-2xl font-semibold mb-4">Exoplanet Parameters</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className=" grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-slate-200">
               Radius (Earth Radii): {editablePlanet.radius.toFixed(2)}
               {editablePlanet.radius < 0.5 && <span className="text-red-500"> - Too small!</span>}
               {editablePlanet.radius > 4 && <span className="text-red-500"> - Too big!</span>}
@@ -449,11 +449,11 @@ const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
               min="0.1"
               max="10"
               step="0.1"
-              className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+              className="w-full cursor-pointer range "
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-slate-200">
               Temperature (K): {editablePlanet.temp}
               {editablePlanet.temp < 210 && <span className="text-red-500"> - Too cold!</span>}
               {editablePlanet.temp > 340 && <span className="text-red-500"> - Too hot!</span>}
@@ -466,11 +466,11 @@ const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
               min="200"
               max="400"
               step="1"
-              className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+              className="w-full  cursor-pointer range"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className=" block text-sm font-medium text-slate-200">
               Distance from Star (AU): {editablePlanet.distance.toFixed(2)}
               {editablePlanet.distance < 0.95 && <span className="text-red-500"> - Too close!</span>}
               {editablePlanet.distance > 1.4 && <span className="text-red-500"> - Too far!</span>}
@@ -483,11 +483,11 @@ const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
               min="0.6"
               max="3"
               step="0.01"
-              className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+              className="w-full  cursor-pointer range"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-slate-200">
               Luminosity (Solar luminosity): {editablePlanet.luminosity.toFixed(2)}
             </label>
             <input
@@ -498,7 +498,7 @@ const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
               min="0.1"
               max="3"
               step="0.1"
-              className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+              className="w-full  cursor-pointer range"
             />
           </div>
         </div>
