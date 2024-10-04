@@ -1,5 +1,6 @@
 import Question from "../models/questionSchema.js";
 import Answer from "../models/answerSchema.js";
+import UpvoteQuestion from "../models/upvoteQuestionSchema.js";
 
 const addQuestion = async (req, res) => {
     try {
@@ -33,21 +34,35 @@ const addQuestion = async (req, res) => {
 
 
 const getLatestQuestions = async (req, res) => {
+    const userId = req.user.id; // assuming you have the authenticated user ID in req.user
+
     try {
-        // Find questions and sort them by the latest first (descending order by createdAt)
+        // Find questions, sort by latest, and populate user details
         const questions = await Question.find()
-            .sort({ createdAt: -1 }) // -1 for descending order
-            .populate("user", "name email") // Optionally populate the user reference with specific fields
+            .sort({ createdAt: -1 })
+            .populate("user", "name email")
             .exec();
+
+        // Check if each question is liked by the user
+        const questionsWithLikes = await Promise.all(
+            questions.map(async (question) => {
+                const isLiked = await UpvoteQuestion.exists({ user: userId, question: question._id });
+                return { 
+                    ...question.toObject(), 
+                    isLiked: !!isLiked // convert to boolean
+                };
+            })
+        );
 
         return res.status(200).json({
             message: "Questions retrieved successfully",
-            questions,
+            questions: questionsWithLikes,
         });
     } catch (error) {
         return res.status(500).json({ message: "Failed to retrieve questions", error: error.message });
     }
 };
+
 
 const addAnswer = async (req, res) => {
     try {
@@ -79,33 +94,50 @@ const addAnswer = async (req, res) => {
 };
 
 const upvoteQuestion = async (req, res) => {
-    try {
-        const { questionId } = req.body;
+    const { questionId } = req.body;
+    const userId = req.user.id; // assuming you have the authenticated user ID in req.user
 
+    try {
         // Check if question ID is provided
         if (!questionId) {
             return res.status(400).json({ message: "Question ID is required" });
         }
 
-        // Find the question by ID and increment upvotes
-        const updatedQuestion = await Question.findByIdAndUpdate(
-            questionId,
-            { $inc: { upvotes: 1 } },
-            { new: true }
-        );
+        // Check if the user has already upvoted the question
+        const existingUpvote = await UpvoteQuestion.findOne({ user: userId, question: questionId });
+
+        let updatedQuestion;
+        if (existingUpvote) {
+            // If already upvoted, remove the upvote and decrement upvotes count
+            await UpvoteQuestion.deleteOne({ user: userId, question: questionId });
+            updatedQuestion = await Question.findByIdAndUpdate(
+                questionId,
+                { $inc: { upvotes: -1 } },
+                { new: true }
+            );
+        } else {
+            // If not yet upvoted, add the upvote and increment upvotes count
+            await UpvoteQuestion.create({ user: userId, question: questionId });
+            updatedQuestion = await Question.findByIdAndUpdate(
+                questionId,
+                { $inc: { upvotes: 1 } },
+                { new: true }
+            );
+        }
 
         if (!updatedQuestion) {
             return res.status(404).json({ message: "Question not found" });
         }
 
         return res.status(200).json({
-            message: "Question upvoted successfully",
+            message: existingUpvote ? "Upvote removed successfully" : "Question upvoted successfully",
             question: updatedQuestion,
         });
     } catch (error) {
-        return res.status(500).json({ message: "Failed to upvote question", error: error.message });
+        return res.status(500).json({ message: "Failed to toggle upvote", error: error.message });
     }
 };
+
 
 const upvoteAnswer = async (req, res) => {
     try {

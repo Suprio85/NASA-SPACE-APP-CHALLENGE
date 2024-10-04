@@ -122,43 +122,54 @@ const SidebarMenu = ({ selectedOption, setSelectedOption }) => {
 const QuestionCard = ({ question }) => {
     const [upvotes, setUpvotes] = useState(question.upvotes);
     const [error, setError] = useState(null);
-  
+    const [isLiked, setIsLiked] = useState(question.isLiked);
+
     const handleUpvote = async () => {
-      try {
-        const payload = { questionId: question._id };
-        await axiosInstance.post('/question/upvotequestion', payload);
-        setUpvotes(upvotes + 1); // Update UI on successful response
-      } catch (error) {
-        console.error('Failed to upvote:', error);
-        setError('Failed to upvote. Please try again later.');
-      }
+        try {
+            const payload = { questionId: question._id };
+            await axiosInstance.post('/question/upvotequestion', payload);
+            
+            if (isLiked) {
+                setUpvotes(prevUpvotes => prevUpvotes - 1);
+            } else {
+                setUpvotes(prevUpvotes => prevUpvotes + 1);
+            }
+            setIsLiked(prevIsLiked => !prevIsLiked);
+            setError(null);
+        } catch (error) {
+            console.error('Failed to toggle upvote:', error);
+            setError('Failed to update vote. Please try again later.');
+        }
     };
-  
+
     return (
-      <div className="border-t border-gray-300 py-3 px-4 hover:bg-gray-50 transition-colors duration-150 ease-in-out">
-        <div className="flex items-start">
-          <div className="flex flex-col items-center mr-4 text-xs text-gray-600">
-            <div className="flex flex-col items-center mb-2">
-              <button onClick={handleUpvote} className="text-gray-400 hover:text-orange-400">
-                <ArrowUp size={18} />
-              </button>
-              <span className="font-medium">{upvotes}</span>
-              {error && <p className="text-red-500">{error}</p>}
+        <div className="border-t border-gray-300 py-3 px-4 hover:bg-gray-50 transition-colors duration-150 ease-in-out">
+            <div className="flex items-start">
+                <div className="flex flex-col items-center mr-4 text-xs text-gray-600">
+                    <div className="flex flex-col items-center mb-2">
+                        <button 
+                            onClick={handleUpvote} 
+                            className={`hover:text-orange-400 ${isLiked ? 'text-orange-400' : 'text-gray-400'}`}
+                        >
+                            <ArrowUp size={18} />
+                        </button>
+                        <span className="font-medium">{upvotes}</span>
+                        {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+                    </div>
+                </div>
+                <div className="flex-grow">
+                    <h3 className="text-base font-medium text-blue-600 hover:text-blue-800 mb-1">
+                        <a href="#">{question.text}</a>
+                    </h3>
+                    <div className="flex items-center text-xs text-gray-600">
+                        <span className="mr-2">asked {new Date(question.createdAt).toLocaleString()}</span>
+                        <span className="mr-2">by {question.user.name}</span>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div className="flex-grow">
-            <h3 className="text-base font-medium text-blue-600 hover:text-blue-800 mb-1">
-              <a href="#">{question.text}</a>
-            </h3>
-            <div className="flex items-center text-xs text-gray-600">
-              <span className="mr-2">asked {new Date(question.createdAt).toLocaleString()}</span>
-              <span className="mr-2">by {question.user.name}</span>
-            </div>
-          </div>
         </div>
-      </div>
     );
-  };
+};
 
 const Forum = () => {
   const [selectedOption, setSelectedOption] = useState("questions");
