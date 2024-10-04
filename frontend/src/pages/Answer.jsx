@@ -127,7 +127,7 @@ const SidebarMenu = ({ selectedOption, setSelectedOption }) => {
 
 // Main StackOverflowAnswerPage component
 const StackOverflowAnswerPage = () => {
-    const questionId = "66ff67a9b00be5fc465bf605"
+    const questionId = "66ffbc57be252159072fc57d"
     const [selectedOption, setSelectedOption] = useState("questions");
     const [question, setQuestion] = useState(null);
     const [answers, setAnswers] = useState([]);
@@ -146,6 +146,7 @@ const StackOverflowAnswerPage = () => {
 
                 const answersResponse = await axiosInstance.post('/question/getanswersbyquestion', { questionId });
                 setAnswers(answersResponse.data.answers);
+                console.log( answersResponse.data.answers );
                 setLoading(false);
             } catch (err) {
                 console.error('Error fetching data:', err);
@@ -197,30 +198,11 @@ const StackOverflowAnswerPage = () => {
     if (!question) return <div>Question not found</div>;
 
     return (
-        <div className="flex h-screen font-Saira">
+        <div className="flex h-screen font-Saira absolute top-0 left-0 w-full">
             <SidebarMenu selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
             <div className="w-4/5 p-6 bg-gray-100 overflow-y-auto">
                 <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
-                    <h1 className="text-2xl font-bold mb-4">{question.title}</h1>
-                    <div className="flex items-start mb-8">
-                        <div className="flex flex-col items-center mr-4">
-                            <button className="text-gray-500 hover:text-orange-500">
-                                <ChevronUp size={36} />
-                            </button>
-                            <span className="text-xl font-bold my-2">{question.upvotes}</span>
-                            <button className="text-gray-500 hover:text-orange-500">
-                                <ChevronDown size={36} />
-                            </button>
-                        </div>
-                        <div>
-                            <p className="text-gray-700 mb-4">{question.text}</p>
-                            <div className="flex items-center text-sm text-gray-500">
-                                <MessageSquare size={16} className="mr-1" />
-                                <span className="mr-4">{question.views} views</span>
-                                <span>Asked by {question.user.name} at {new Date(question.createdAt).toLocaleString()}</span>
-                            </div>
-                        </div>
-                    </div>
+                    <h1 className="text-2xl font-bold mb-4">{question.text}</h1>
 
                     <h2 className="text-xl font-bold mb-4">{answers.length} Answers</h2>
                     {answers.map(answer => (
