@@ -30,12 +30,14 @@ import { errHandeler } from './middlewares/errorHandler.js';
 import chapterRouter from './routes/chapter.route.js';
 import quizRouter from './routes/quiz.route.js';
 import blogRouter from './routes/blog.route.js';
+import questionRoter from './routes/question.route.js';
 
 app.use("/api/v1/auth",userRouter);
 app.use("/api/v1/chatbot",chatbotRouter);
 app.use("/api/v1/chapter",chapterRouter);
 app.use("/api/v1/quiz",quizRouter);
 app.use("/api/v1/blog",blogRouter);
+app.use("/api/v1/question",questionRoter);
 app.use(errHandeler);
 
 export default app;
