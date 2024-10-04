@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ArrowUp, Plus, X } from 'lucide-react';
 import axiosInstance from '../utils/axiosInstance';
+import { set } from "mongoose";
 
 const Button = ({ children, onClick, className, type = "button" }) => (
   <button
@@ -32,10 +33,11 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   );
 };
 
-const AskQuestionModal = () => {
+const AskQuestionModal = ({setQuestions}) => {
     const [isOpen, setIsOpen] = useState(false);
     const [text, setText] = useState('');
     const [details, setDetails] = useState('');
+  
     
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -44,7 +46,14 @@ const AskQuestionModal = () => {
           text: text,
           details: details
         };
-        await axiosInstance.post('/question/addquestion', payload);
+        const response = await axiosInstance.post('/question/addquestion', payload);
+        console.log(response.data);
+    
+        setQuestions((prevQuestions) => {
+          const updatedQuestions = [...prevQuestions, response.data.question];
+          return updatedQuestions.sort((a, b) => new Date(b.createdAt)- new Date(a.createdAt));
+        });
+    
         setIsOpen(false);
         setText('');
         setDetails('');
@@ -95,10 +104,10 @@ const AskQuestionModal = () => {
   };
   
 
-const SidebarMenu = ({ selectedOption, setSelectedOption }) => {
+const SidebarMenu = ({ selectedOption, setSelectedOption,setQuestions }) => {
   return (
     <div className="w-1/5 bg-gray-800 text-white h-screen p-4 flex flex-col">
-      <AskQuestionModal />
+      <AskQuestionModal setQuestions ={setQuestions} />
       <div
         className={`cursor-pointer p-2 mb-2 rounded ${
           selectedOption === "questions" ? "bg-gray-700" : ""
@@ -182,6 +191,7 @@ const Forum = () => {
       try {
         setLoading(true);
         const response = await axiosInstance.get('/question/getlatestquestions');
+        console.log(response.data.questions);
         setQuestions(response.data.questions);
         setLoading(false);
       } catch (err) {
@@ -198,6 +208,7 @@ const Forum = () => {
       <SidebarMenu
         selectedOption={selectedOption}
         setSelectedOption={setSelectedOption}
+        setQuestions={setQuestions}
       />
       <div className="w-4/5 p-6 bg-slate-300">
         {selectedOption === "questions" && (
