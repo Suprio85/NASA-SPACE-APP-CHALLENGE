@@ -3,7 +3,7 @@ import Answer from "../models/answerSchema.js";
 
 const addQuestion = async (req, res) => {
     try {
-        const { text } = req.body;
+        const { text , details } = req.body;
         const userId = req.user._id
 
         // Check if required fields are present
@@ -14,7 +14,8 @@ const addQuestion = async (req, res) => {
         // Create a new question document
         const newQuestion = new Question({
             text,
-            user: userId,  // Assuming userId is being passed in the request body
+            user: userId,
+            details,
         });
 
         // Save the question to the database
@@ -23,6 +24,7 @@ const addQuestion = async (req, res) => {
         return res.status(201).json({
             message: "Question added successfully",
             question: savedQuestion,
+            details
         });
     } catch (error) {
         return res.status(500).json({ message: "Failed to add question", error: error.message });

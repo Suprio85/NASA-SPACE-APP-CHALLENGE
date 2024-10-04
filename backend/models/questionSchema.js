@@ -7,6 +7,10 @@ const questionSchema = new Schema({
         type: String,
         required: [true, "Question text is required"],
     },
+    details: {
+        type: String,
+        required: [true, "Question details are required"],
+    },
     user: {
         type: Schema.Types.ObjectId,
         ref: "User",
