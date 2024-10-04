@@ -3,6 +3,7 @@ import { ChevronUp, MessageSquare, Award, ArrowUp, Plus, X } from 'lucide-react'
 import EditorComponent from '../component/editorComponent';
 import axiosInstance from '../utils/axiosInstance';
 import AnswerComponent from '../component/AnswerComponent';
+import { useParams } from 'react-router-dom';
 
 // Button component
 const Button = ({ children, onClick, className, type = "button", disabled = false }) => (
@@ -127,7 +128,10 @@ const SidebarMenu = ({ selectedOption, setSelectedOption }) => {
 
 // Main StackOverflowAnswerPage component
 const StackOverflowAnswerPage = () => {
-    const questionId = "66ffbc57be252159072fc57d"
+    const params = useParams();
+
+    const questionId = params.questionId
+    console.log("question id: ",questionId)
     const [selectedOption, setSelectedOption] = useState("questions");
     const [question, setQuestion] = useState(null);
     const [answers, setAnswers] = useState([]);

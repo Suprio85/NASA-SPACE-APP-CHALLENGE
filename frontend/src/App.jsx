@@ -67,7 +67,7 @@ function App() {
         <Route path='/blog' element={<BlogPage />} />
         <Route path='/testblog' element={< TestBlog />} />
         <Route path='/forum' element={<Forum />} />
-        <Route path='/answer' element={<Answer />} />
+        <Route path='/forum/answer/:questionId' element={<Answer />} />
       </Routes>
       </Router>
       </UserProvider>
