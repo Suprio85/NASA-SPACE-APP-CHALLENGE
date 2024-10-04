@@ -112,21 +112,21 @@ const JourneyWithorbit = () => {
                             </div> */}
                             <div className=" flex justify-normal items-center">
                                 <div className="w-full h-full">
-                                    <Typist avgTypingDelay={30} cursor={{ show: true, blink: true, element: '|', hideWhenDone: true }}>
                                         <div className="flex justify-start items-center">
+                                    <Typist avgTypingDelay={30} cursor={{ show: true, blink: true, element: '|', hideWhenDone: true }}>
                                             Hey there, space explorers! I’m Orbit
                                             {/* <span className="w-24 mx-2">
                                             <OrbitName />
                                         </span>
                                         , */}
-                                        </div>
                                         <Typist.Delay ms={500} /> {/* Optional: Adds a pause before continuing */}
-                                        <div>
+                                        
                                             your guide to the stars. Today, I’m going to tell you a story about
                                             exoplanets—planets that exist outside our solar system. Buckle up,
                                             because we’re about to embark on an exciting journey across the galaxy!
-                                        </div>
+                                        
                                     </Typist>
+                                        </div>
                                 </div>
                             </div>
                         </div>

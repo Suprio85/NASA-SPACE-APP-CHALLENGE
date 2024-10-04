@@ -24,6 +24,7 @@ import GravitationalMicroLensing from './pages/differentMethods/GravitationalMic
 import Chatbot from './component/Chatbot'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { UserProvider } from './contexts/userContext.jsx'
+import ExoplanetVisualizer from './pages/exoplanetmap.jsx'
 
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
         <Route path='/transitsimulator' element={<TransitSimulator />} />
         <Route path='/directimagingdemo' element={<DirectImagingDemo />} />
         <Route path='/GravitationalMicrolensingSimulation' element={<GravitationalMicrolensingSimulation />} />
+        <Route path='/ev' element={<ExoplanetVisualizer />} />
 
       </Routes>
       </Router>

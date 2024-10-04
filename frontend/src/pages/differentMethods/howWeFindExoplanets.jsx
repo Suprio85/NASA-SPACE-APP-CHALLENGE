@@ -2,10 +2,11 @@ import React from "react";
 import story_bg_1 from "../../assets/story_bg_1.png";
 import story_bg_2 from "../../assets/bg_4.png";
 // import OrbitName from "../../component/orbitName";
-import char2 from "../../assets/SVG/char2.svg";
+import char2 from "../../assets/SVG/char11.svg";
 import char3 from "../../assets/SVG/char3.svg";
 import directImaging from "../../assets/SVG/directImaging.svg";
 import radialVelocity from "../../assets/SVG/radialVelocity.svg";
+import Typist from 'react-typist';
 
 import transit from "../../assets/SVG/transit.svg";
 
@@ -68,12 +69,14 @@ const HowWeFindExoplanets = () => {
                     <img src={story_bg_1} alt="story_bg_1" className="" />
                 </div>
                 <div className="flex mx-60 justify-center items-center">
-                    <div className="w-full">
-                        <img src={char2} alt="char2" className="w-3/4" />
+                    <div className="w-1/2">
+                        <img src={char2} alt="char2 " className="w-3/4 animate-shake" />
                     </div>
-                    <div className="flex flex-col justify-center items-start text-3xl text-white font-Saira h-screen">
-                        <div className="flex justify-center items-center">
+                    <div className="flex flex-col justify-center items-start text-3xl text-white font-Saira h-screen w-full">
+                        <div className="bg-slate-900 h-80 p-8 flex flex-col justify-center items-start rounded-md border-2 border-slate-500 bg-opacity-50 w-full">
+                    <Typist avgTypingDelay={30} cursor={{ show: true, blink: true, element: '|', hideWhenDone: true }}>
                             Orbit floated through space, his sensors glowing as he scanned the universe around him.<br></br>“Finding a planet around another star sounds like searching for a needle in a cosmic haystack, right?” Orbit asked with a playful tone. “But humans have developed some clever techniques to find these distant worlds. Let me show you how it’s done!”
+                        </Typist>
                         </div>
 
                     </div>

@@ -213,7 +213,7 @@ function App() {
                     step="0.01"
                     value={speed}
                     onChange={(e) => setSpeed(parseFloat(e.target.value))}
-                    className="range  w-60"
+                    className="range  w-60 bg-gray-700 bg-opacity-30"
                 />
                 </div>
             </div>

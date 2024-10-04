@@ -216,7 +216,7 @@ export default function WobbleMethodSimulation() {
   const updatePlanetMass = (newMass) => setPlanetMass(newMass);
 
   return (
-    <div style={{ height: '100vh', width: '100vw', position: 'relative' }}>
+    <div className='absolute top-0 left-0' style={{ height: '100vh', width: '100vw', position: 'relative' }}>
       <Canvas camera={{ position: [0, 0, 20] }} style={{ flex: 1 }}>
         <ambientLight intensity={2.5} />
         <pointLight position={[10, 10, 10]} intensity={1.5} />
@@ -251,7 +251,7 @@ export default function WobbleMethodSimulation() {
               step="0.1"
               value={starSize}
               onChange={(e) => updateStarSize(parseFloat(e.target.value))}
-              className="range"
+              className="range bg-gray-700 bg-opacity-30"
             />
           </label>
         </div>
@@ -264,7 +264,7 @@ export default function WobbleMethodSimulation() {
               max="1"
               step="0.1"
               value={planetSize}
-              className="range"
+              className="range bg-gray-700 bg-opacity-30"
               onChange={(e) => updatePlanetSize(parseFloat(e.target.value))}
             />
           </label>
@@ -277,7 +277,7 @@ export default function WobbleMethodSimulation() {
               min="2"
               max="3.5"
               step="0.1"
-              className="range"
+              className="range bg-gray-700 bg-opacity-30"
               value={starMass}
               onChange={(e) => updateStarMass(parseFloat(e.target.value))}
             />
@@ -291,7 +291,7 @@ export default function WobbleMethodSimulation() {
               min="0.5"
               max="1.4"
               step="0.1"
-              className="range"
+              className="range bg-gray-700 bg-opacity-30"
               value={planetMass}
               onChange={(e) => updatePlanetMass(parseFloat(e.target.value))}
             />

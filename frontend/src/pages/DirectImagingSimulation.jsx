@@ -252,7 +252,7 @@ const ExoplanetDetectionSimulation = () => {
     const [telescopeSize, setTelescopeSize] = useState(1.5);
 
     return (
-        <div style={{ width: '100vw', height: '100vh', backgroundColor: '#000000' }}>
+        <div className="absolute top-0 left-0" style={{ width: '100vw', height: '100vh', backgroundColor: '#000000' }}>
             {/* 3D Canvas */}
             <Canvas camera={{ position: [0, 3, 15], fov: 60 }} shadows>
                 <Scene
@@ -274,12 +274,12 @@ const ExoplanetDetectionSimulation = () => {
                         max="1"
                         step="0.01"
                         value={planetSpeed}
-                        className='range w-60'
+                        className='range w-60 bg-gray-700 bg-opacity-30'
                         onChange={(e) => setPlanetSpeed(parseFloat(e.target.value))}
                         style={{
                            
                             cursor: 'pointer',
-                            background: '#555555',
+
                         }}
                     />
                 </div>
@@ -294,12 +294,11 @@ const ExoplanetDetectionSimulation = () => {
                         max="12"
                         step="0.1"
                         value={telescopeDistance}
-                        className='range w-60'
+                        className='range w-60 bg-gray-700 bg-opacity-30'
                         onChange={(e) => setTelescopeDistance(parseFloat(e.target.value))}
                         style={{
                             
                             cursor: 'pointer',
-                            background: '#555555',
                         }}
                     />
                 </div>
@@ -311,12 +310,12 @@ const ExoplanetDetectionSimulation = () => {
                         max="3"
                         step="0.1"
                         value={telescopeSize}
-                        className='range'
+                        className='range bg-gray-700 bg-opacity-30'
                         onChange={(e) => setTelescopeSize(parseFloat(e.target.value))}
                         style={{
                             width: '240px',
                             cursor: 'pointer',
-                            background: '#555555',
+                            // background: '#555555',
                         }}
                     />
                 </div>

@@ -86,84 +86,90 @@ const TransitMethod = () => {
                 <div className="mt-10 " onClick={handleSimulation}><Button text="Simulate Transit Method" /></div>
             </div>
 
-            <div className="border-2 mb-10 rounded-xl p-3 pt-10 border-opacity-10 border-gray-300 bg-gray-700 bg-opacity-30">
-                <div className="pl-10"><StrongText text="How the Transit Method Works:" /></div>
-                <Para text1="Planet Transiting the Star:" text2={`A planet orbiting a star occasionally passes between the star and the observer (on Earth or in space). This is known as a transit.
+            <div className="border-2 mb-10 rounded-xl p-3  border-opacity-10 border-gray-300 bg-gray-700 bg-opacity-30">
+                <details className="collapse">
+                    <summary className="pl-10 collapse-title"><StrongText text="How the Transit Method Works:" /></summary>
+                    <Para text1="Planet Transiting the Star:" text2={`A planet orbiting a star occasionally passes between the star and the observer (on Earth or in space). This is known as a transit.
                     During the transit, the planet blocks a tiny fraction of the star’s light, causing the star to dim slightly. This decrease in brightness is typically small but detectable with sensitive instruments.` } />
-                <Para text1="Light Curve Analysis:" text2={`The brightness of the star is monitored continuously, and when a planet transits, the star’s light curve (a graph of the star's brightness over time) shows a characteristic dip. The light curve provides the timing and depth of the transit.
+                    <Para text1="Light Curve Analysis:" text2={`The brightness of the star is monitored continuously, and when a planet transits, the star’s light curve (a graph of the star's brightness over time) shows a characteristic dip. The light curve provides the timing and depth of the transit.
                     By observing repeated transits, astronomers can determine the planet’s orbital period (how long it takes to complete one orbit around the star).
                     The shape of the light curve dip, including how steeply it falls and rises, provides information about the size and orbit of the planet.` } />
-                <Para text1="Planetary Properties from the Light Curve:" text2={`Planet Size (Radius): The depth of the dip in the star’s brightness indicates the size of the planet relative to the star. A larger planet blocks more light, causing a deeper dip.
+                    <Para text1="Planetary Properties from the Light Curve:" text2={`Planet Size (Radius): The depth of the dip in the star’s brightness indicates the size of the planet relative to the star. A larger planet blocks more light, causing a deeper dip.
                     Orbital Period: By measuring the time between consecutive transits, astronomers can determine the planet’s orbital period.
                     Distance from the Star (Semi-major Axis): Using Kepler's Third Law, the orbital period of the planet can be related to the distance between the planet and its star. This helps estimate whether the planet is in the star’s habitable zone (the region where liquid water could exist).
                     Atmospheric Composition (for certain cases): For some planets, during the transit, light from the star passes through the planet’s atmosphere. By analyzing the spectrum of this light, scientists can infer the composition of the planet’s atmosphere.` } />
+                </details>
             </div>
-            <div>
+            <div className="w-full flex  gap-3">
                 <ImgaeShow img={TransitMethod1} />
-            </div>
-            <div className="border-2 mb-10 rounded-xl p-3 pt-10 border-opacity-10 border-gray-300 bg-gray-700 bg-opacity-30">
-                <div className="pl-10"><StrongText text="Conditions for Detection:" /></div>
-                <Para text1="" text2={`The transit method works only when the planet’s orbit is aligned with the line of sight between Earth and the star. In other words, the planet must cross directly in front of the star from the observer’s point of view.
-                This alignment happens for a small percentage of planetary systems, meaning many planets won’t be detectable with this method.` } />
-            </div>
-            <div className="border-2 mb-10 rounded-xl p-3 pt-10 border-opacity-10 border-gray-300 bg-gray-700 bg-opacity-30">
-                <div className="pl-10"><StrongText text="Strengths of the Transit Method:" /></div>
-                <Para text1="Sensitive to Small Planets:" text2={`The transit method is capable of detecting relatively small planets, including Earth-sized planets, as long as the instrument is sensitive enough to measure very small dips in brightness.
-                It works well for planets close to their stars because such planets transit more frequently, increasing the chances of detection.` } />
-                <Para text1="Provides Information About Planetary Atmospheres:" text2={`When a planet transits its star, some starlight passes through the planet’s atmosphere, which allows astronomers to study the atmospheric composition through transmission spectroscopy. Gases in the atmosphere absorb light at specific wavelengths, which can reveal the presence of compounds such as water vapor, carbon dioxide, or methane.`} />
-                <Para text1="High Success Rate:" text2={`The transit method has been extremely successful in detecting a large number of exoplanets, particularly with space-based telescopes like Kepler and TESS.
-                It allows for the detection of multi-planet systems, as multiple planets can cause multiple dips in the light curve.`} />
-                <Para text1="Enables Measurement of Planetary Density (with Radial Velocity):" text2={`When combined with the Radial Velocity method, the transit method can provide the planet’s density. The transit method gives the planet’s size, while radial velocity provides the planet’s mass. Knowing both, astronomers can calculate density and make inferences about whether the planet is rocky, gaseous, or an ice giant.`} />
-            </div>
-            <div>
                 <ImgaeShow img={TransitMethod2} />
             </div>
-            <div className="border-2 mb-10 rounded-xl p-3 pt-10 border-opacity-10 border-gray-300 bg-gray-700 bg-opacity-30">
-                <div className="pl-10">
-                    <StrongText text="Limitations of the Transit Method:" />
-                </div>
-
-                <Para
-                    text1="Geometric Constraints:"
-                    text2={`A key limitation of the transit method is that it requires a specific geometric alignment. Only planetary systems where the planet’s orbit happens to be edge-on relative to Earth can be observed. This limits the percentage of stars for which transiting planets can be detected (estimated to be around 0.5% to 3% for Sun-like stars).`}
-                />
-
-                <Para
-                    text1="Biased Towards Large, Close-in Planets:"
-                    text2={`Larger planets, such as hot Jupiters (gas giants that orbit very close to their stars), are easier to detect because they block more light. These planets also have shorter orbital periods, meaning more frequent transits.
-Small, Earth-like planets, especially those far from their stars, are harder to detect because the dimming they cause is minimal and transits occur less frequently.`}
-                />
-
-                <Para
-                    text1="False Positives:"
-                    text2={`The transit method is prone to false positives. For example, a binary star system might produce a dip in brightness that mimics the signal of a planet. Additional follow-up observations using radial velocity or other methods are often needed to confirm that the observed dimming is due to a planet and not another astronomical object.`}
-                />
+            <div className="border-2 mb-10 rounded-xl p-3  border-opacity-10 border-gray-300 bg-gray-700 bg-opacity-30">
+                <details className="collapse">
+                    <summary className="pl-10 collapse-title"><StrongText text="Conditions for Detection:" /></summary>
+                    <Para text1="" text2={`The transit method works only when the planet’s orbit is aligned with the line of sight between Earth and the star. In other words, the planet must cross directly in front of the star from the observer’s point of view.
+                    This alignment happens for a small percentage of planetary systems, meaning many planets won’t be detectable with this method.` } />
+                </details>
             </div>
-            <div className="border-2 mb-10 rounded-xl p-3 pt-10 border-opacity-10 border-gray-300 bg-gray-700 bg-opacity-30">
-                <div className="pl-10">
-                    <StrongText text="Space Missions Using the Transit Method:" />
-                </div>
+            <div className="border-2 mb-10 rounded-xl p-3  border-opacity-10 border-gray-300 bg-gray-700 bg-opacity-30">
+                <details className="collapse">
+                    <summary className="pl-10 collapse-title"><StrongText text="Strengths of the Transit Method:" /></summary>
+                    <Para text1="Sensitive to Small Planets:" text2={`The transit method is capable of detecting relatively small planets, including Earth-sized planets, as long as the instrument is sensitive enough to measure very small dips in brightness.
+                It works well for planets close to their stars because such planets transit more frequently, increasing the chances of detection.` } />
+                    <Para text1="Provides Information About Planetary Atmospheres:" text2={`When a planet transits its star, some starlight passes through the planet’s atmosphere, which allows astronomers to study the atmospheric composition through transmission spectroscopy. Gases in the atmosphere absorb light at specific wavelengths, which can reveal the presence of compounds such as water vapor, carbon dioxide, or methane.`} />
+                    <Para text1="High Success Rate:" text2={`The transit method has been extremely successful in detecting a large number of exoplanets, particularly with space-based telescopes like Kepler and TESS.
+                It allows for the detection of multi-planet systems, as multiple planets can cause multiple dips in the light curve.`} />
+                    <Para text1="Enables Measurement of Planetary Density (with Radial Velocity):" text2={`When combined with the Radial Velocity method, the transit method can provide the planet’s density. The transit method gives the planet’s size, while radial velocity provides the planet’s mass. Knowing both, astronomers can calculate density and make inferences about whether the planet is rocky, gaseous, or an ice giant.`} />
+                </details>
+            </div>
+            <div>
+            </div>
+            <div className="border-2 mb-10 rounded-xl p-3  border-opacity-10 border-gray-300 bg-gray-700 bg-opacity-30">
+                <details className="collapse">
+                    <summary className="pl-10 collapse-title"><StrongText text="Limitations of the Transit Method:" /></summary>
 
-                <Para
-                    text1="Kepler Space Telescope:"
-                    text2={`The Kepler mission, launched by NASA in 2009, is one of the most successful space telescopes that used the transit method. It observed over 150,000 stars in a small patch of the sky and discovered thousands of exoplanets.
-It focused on finding Earth-sized planets in the habitable zone of stars where liquid water could exist.`}
-                />
+                    <Para
+                        text1="Geometric Constraints:"
+                        text2={`A key limitation of the transit method is that it requires a specific geometric alignment. Only planetary systems where the planet’s orbit happens to be edge-on relative to Earth can be observed. This limits the percentage of stars for which transiting planets can be detected (estimated to be around 0.5% to 3% for Sun-like stars).`}
+                    />
 
-                <Para
-                    text1="TESS (Transiting Exoplanet Survey Satellite):"
-                    text2={`Launched in 2018, TESS is a follow-up to the Kepler mission and surveys the entire sky, focusing on the brightest stars near Earth. Its goal is to find exoplanets around nearby stars, which are easier to study in more detail.`}
-                />
+                    <Para
+                        text1="Biased Towards Large, Close-in Planets:"
+                        text2={`Larger planets, such as hot Jupiters (gas giants that orbit very close to their stars), are easier to detect because they block more light. These planets also have shorter orbital periods, meaning more frequent transits.
+                            Small, Earth-like planets, especially those far from their stars, are harder to detect because the dimming they cause is minimal and transits occur less frequently.`}
+                    />
 
-                <Para
-                    text1="PLATO (PLAnetary Transits and Oscillations of stars):"
-                    text2={`PLATO, a European Space Agency (ESA) mission planned for launch in 2026, will use the transit method to search for Earth-like planets and study the oscillations of stars to understand their interiors.`}
-                />
+                    <Para
+                        text1="False Positives:"
+                        text2={`The transit method is prone to false positives. For example, a binary star system might produce a dip in brightness that mimics the signal of a planet. Additional follow-up observations using radial velocity or other methods are often needed to confirm that the observed dimming is due to a planet and not another astronomical object.`}
+                    />
+                </details>
+            </div>
+            <div className="border-2 mb-10 rounded-xl p-3  border-opacity-10 border-gray-300 bg-gray-700 bg-opacity-30">
+                <details className="collapse">
+                    <summary className="pl-10 collapse-title"><StrongText text="Space Missions Using the Transit Method:" /></summary>
 
-                <Para
-                    text1="James Webb Space Telescope (JWST):"
-                    text2={`Although JWST is not a dedicated exoplanet hunter, it will be able to use the transit method to study the atmospheres of exoplanets by observing their transits and analyzing the starlight passing through their atmospheres.`}
-                />
+                    <Para
+                        text1="Kepler Space Telescope:"
+                        text2={`The Kepler mission, launched by NASA in 2009, is one of the most successful space telescopes that used the transit method. It observed over 150,000 stars in a small patch of the sky and discovered thousands of exoplanets.
+                            It focused on finding Earth-sized planets in the habitable zone of stars where liquid water could exist.`}
+                    />
+
+                    <Para
+                        text1="TESS (Transiting Exoplanet Survey Satellite):"
+                        text2={`Launched in 2018, TESS is a follow-up to the Kepler mission and surveys the entire sky, focusing on the brightest stars near Earth. Its goal is to find exoplanets around nearby stars, which are easier to study in more detail.`}
+                    />
+
+                    <Para
+                        text1="PLATO (PLAnetary Transits and Oscillations of stars):"
+                        text2={`PLATO, a European Space Agency (ESA) mission planned for launch in 2026, will use the transit method to search for Earth-like planets and study the oscillations of stars to understand their interiors.`}
+                    />
+
+                    <Para
+                        text1="James Webb Space Telescope (JWST):"
+                        text2={`Although JWST is not a dedicated exoplanet hunter, it will be able to use the transit method to study the atmospheres of exoplanets by observing their transits and analyzing the starlight passing through their atmospheres.`}
+                    />
+                </details>
             </div>
 
 

@@ -63,18 +63,18 @@ const Chatbot = () => {
         <button
           onClick={() => setIsOpen(true)}
           className="fixed bottom-10  right-10  text-white   focus:outline-none focus:ring-2 focus:ring-blue-500"
-          style={{ zIndex: '10000' }}
+          style={{ zIndex: '1000000' }}
         >
           <img src={Logo} alt="Chatbot" className="w-20 h-20" />
         </button>
       )}
       {
-        isOpen && (<div className='w-screen h-screen fixed top-0 left-0 bg-slate-950 bg-opacity-70 ' style={{ zIndex: '500' }}>
+        isOpen && (<div className='w-screen h-screen fixed top-0 left-0 bg-slate-950 bg-opacity-70 ' style={{ zIndex: '5000' }}>
 
         </div>)
       }
       <div
-        className={`fixed rounded-2xl m-10 ${isOpen ? 'mr-10' : 'mr-0'} inset-y-0 right-0 w-1/2 bg-slate-950 border-l-2 border-slate-700 shadow-lg transform ${isOpen ? 'translate-x-0 ' : 'translate-x-full '} transition-transform duration-300 ease-in-out flex flex-col`} style={{ zIndex: 100000 }}
+        className={`fixed rounded-2xl m-10 ${isOpen ? 'mr-10' : 'mr-0'} inset-y-0 right-0 w-1/2 bg-slate-950 border-l-2 border-slate-700 shadow-lg transform ${isOpen ? 'translate-x-0 ' : 'translate-x-full '} transition-transform duration-300 ease-in-out flex flex-col`} style={{ zIndex: 10000000 }}
       >
         <div className="flex justify-between items-center p-4 border-b  border-slate-600">
           <h2 className="text-lg  flex w-full justify-start items-start gap-2 font-Saira font-bold ml-5">ASK <div className='w-16'><OrbitName /></div></h2>

@@ -168,7 +168,7 @@ const TransitSimulation = () => {
   };
 
   return (
-    <div className="w-full h-screen relative">
+    <div className="w-full h-screen relative top-0 left-0">
       <div ref={mountRef} className="absolute inset-0 w-full"></div>
       <div className="flex-col rounded-full font-Saira font-bold text-slate-400 text-3xl flex justify-center items-start">
         <div className="p-1 rounded-md ml-10 mt-10 font-Titiliuam z-50">
@@ -191,7 +191,7 @@ const TransitSimulation = () => {
           step="0.1"
           value={starRadius}
           onChange={(e) => setStarRadius(parseFloat(e.target.value))}
-          className="w-full range"
+          className="w-full range bg-gray-700 bg-opacity-30"
         />
 
         <label className="block text-white mt-4">Planet Radius: {planetRadius}</label>
@@ -202,7 +202,7 @@ const TransitSimulation = () => {
           step="0.01"
           value={planetRadius}
           onChange={(e) => setPlanetRadius(parseFloat(e.target.value))}
-          className="w-full range"
+          className="w-full range bg-gray-700 bg-opacity-30"
         />
 
         <label className="block text-white mt-4">Orbit Radius: {orbitRadius}</label>
@@ -213,7 +213,7 @@ const TransitSimulation = () => {
           step="0.1"
           value={orbitRadius}
           onChange={(e) => setOrbitRadius(parseFloat(e.target.value))}
-          className="w-full range"
+          className="w-full range bg-gray-700 bg-opacity-30"
         />
 
         <label className="block text-white mt-4">Speed: {speed.toFixed(3)}</label>
@@ -224,7 +224,7 @@ const TransitSimulation = () => {
           step="0.001"
           value={speed}
           onChange={(e) => setSpeed(parseFloat(e.target.value))}
-          className="w-full range"
+          className="w-full range bg-gray-700 bg-opacity-30"
         />
       </div>
     </div>
