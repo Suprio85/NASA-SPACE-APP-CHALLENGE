@@ -1,6 +1,7 @@
 import Question from "../models/questionSchema.js";
 import Answer from "../models/answerSchema.js";
 import UpvoteQuestion from "../models/upvoteQuestionSchema.js";
+import Upvote from "../models/upvoteAnswerSchema.js";
 
 const addQuestion = async (req, res) => {
     try {
@@ -142,35 +143,60 @@ const upvoteQuestion = async (req, res) => {
 const upvoteAnswer = async (req, res) => {
     try {
         const { answerId } = req.body;
+        const userId = req.user._id; // Assuming the user ID comes from the authenticated user
 
         // Check if answer ID is provided
         if (!answerId) {
             return res.status(400).json({ message: "Answer ID is required" });
         }
 
-        // Find the answer by ID and increment upvotes
-        const updatedAnswer = await Answer.findByIdAndUpdate(
-            answerId,
-            { $inc: { upvotes: 1 } },
-            { new: true }
-        );
+        // Check if the user has already upvoted this answer
+        const existingUpvote = await Upvote.findOne({ userId, answerId });
 
-        if (!updatedAnswer) {
-            return res.status(404).json({ message: "Answer not found" });
+        if (existingUpvote) {
+            // User has already upvoted, so remove the upvote
+            await Upvote.findByIdAndDelete(existingUpvote._id);
+
+            // Decrement the upvote count on the answer
+            const updatedAnswer = await Answer.findByIdAndUpdate(
+                answerId,
+                { $inc: { upvotes: -1 } },
+                { new: true }
+            );
+
+            return res.status(200).json({
+                message: "Upvote removed successfully",
+                answer: updatedAnswer,
+            });
+        } else {
+            // User has not upvoted, so add the upvote
+            const newUpvote = new Upvote({
+                userId,
+                answerId,
+            });
+            await newUpvote.save();
+
+            // Increment the upvote count on the answer
+            const updatedAnswer = await Answer.findByIdAndUpdate(
+                answerId,
+                { $inc: { upvotes: 1 } },
+                { new: true }
+            );
+
+            return res.status(200).json({
+                message: "Answer upvoted successfully",
+                answer: updatedAnswer,
+            });
         }
-
-        return res.status(200).json({
-            message: "Answer upvoted successfully",
-            answer: updatedAnswer,
-        });
     } catch (error) {
-        return res.status(500).json({ message: "Failed to upvote answer", error: error.message });
+        return res.status(500).json({ message: "Failed to toggle upvote", error: error.message });
     }
 };
 
 const getAnswersByQuestionId = async (req, res) => {
     try {
         const { questionId } = req.body;
+        const userId = req.user._id; // Assuming user ID is retrieved from JWT auth middleware
 
         // Check if question ID is provided
         if (!questionId) {
@@ -183,9 +209,20 @@ const getAnswersByQuestionId = async (req, res) => {
             .populate("user", "name email") // Optionally populate user details
             .exec();
 
+        // For each answer, check if the user has liked it
+        const answersWithLikeStatus = await Promise.all(
+            answers.map(async (answer) => {
+                const isLiked = await Upvote.exists({ userId, answerId: answer._id });
+                return {
+                    ...answer._doc, // Spread the answer document to include its fields
+                    isLiked: !!isLiked, // Add isLiked field
+                };
+            })
+        );
+
         return res.status(200).json({
             message: "Answers retrieved successfully",
-            answers,
+            answers: answersWithLikeStatus,
         });
     } catch (error) {
         return res.status(500).json({ message: "Failed to retrieve answers", error: error.message });

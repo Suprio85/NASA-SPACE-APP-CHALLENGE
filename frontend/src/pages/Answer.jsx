@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronUp, ChevronDown, MessageSquare, Award, ArrowUp, Plus, X } from 'lucide-react';
+import { ChevronUp, MessageSquare, Award, ArrowUp, Plus, X } from 'lucide-react';
 import EditorComponent from '../component/editorComponent';
 import axiosInstance from '../utils/axiosInstance';
 import AnswerComponent from '../component/AnswerComponent';
@@ -146,7 +146,7 @@ const StackOverflowAnswerPage = () => {
 
                 const answersResponse = await axiosInstance.post('/question/getanswersbyquestion', { questionId });
                 setAnswers(answersResponse.data.answers);
-                console.log( answersResponse.data.answers );
+                console.log(answersResponse.data.answers);
                 setLoading(false);
             } catch (err) {
                 console.error('Error fetching data:', err);
@@ -158,18 +158,52 @@ const StackOverflowAnswerPage = () => {
         fetchQuestionAndAnswers();
     }, [questionId]);
 
-
     const handleVote = async (answerId) => {
         try {
-            await axiosInstance.post('/question/upvoteanswer', {
+            // Optimistically update the UI
+            setAnswers(prevAnswers => prevAnswers.map(answer => {
+                if (answer._id === answerId) {
+                    const newUpvotes = answer.isLiked ? answer.upvotes - 1 : answer.upvotes + 1;
+                    return {
+                        ...answer,
+                        upvotes: newUpvotes,
+                        isLiked: !answer.isLiked
+                    };
+                }
+                return answer;
+            }));
+
+            // Send request to backend
+            const response = await axiosInstance.post('/question/upvoteanswer', {
                 questionId: questionId,
                 answerId: answerId,
             });
-
-            const response = await axiosInstance.post('/question/getanswersbyquestion', { questionId });
-            setAnswers(response.data.answers);
+            
+            // Update with the response from the server to ensure consistency
+            setAnswers(prevAnswers => prevAnswers.map(answer => {
+                if (answer._id === answerId) {
+                    return {
+                        ...answer,
+                        upvotes: response.data.upvotes,
+                        isLiked: response.data.isLiked
+                    };
+                }
+                return answer;
+            }));
         } catch (error) {
             console.error('Failed to upvote:', error);
+            // Revert the optimistic update if the request fails
+            setAnswers(prevAnswers => prevAnswers.map(answer => {
+                if (answer._id === answerId) {
+                    const newUpvotes = answer.isLiked ? answer.upvotes + 1 : answer.upvotes - 1;
+                    return {
+                        ...answer,
+                        upvotes: newUpvotes,
+                        isLiked: !answer.isLiked
+                    };
+                }
+                return answer;
+            }));
         }
     };
 
@@ -181,7 +215,6 @@ const StackOverflowAnswerPage = () => {
         if (!newAnswer) return;
 
         try {
-            
             const response = await axiosInstance.post('/question/addanswer', {
                 questionId: questionId,
                 text: newAnswer.blocks[0].data.text, // Simplified for demo
@@ -209,13 +242,13 @@ const StackOverflowAnswerPage = () => {
                         <div key={answer._id} className="border-t pt-6 mb-6">
                             <div className="flex items-start">
                                 <div className="flex flex-col items-center mr-4">
-                                    <button onClick={() => handleVote(answer._id)} className="text-gray-500 hover:text-orange-500">
+                                    <button 
+                                        onClick={() => handleVote(answer._id)} 
+                                        className={`hover:text-orange-500 ${answer.isLiked ? 'text-orange-500' : 'text-gray-500'}`}
+                                    >
                                         <ChevronUp size={36} />
                                     </button>
                                     <span className="text-xl font-bold my-2">{answer.upvotes}</span>
-                                    <button className="text-gray-500 hover:text-orange-500">
-                                        <ChevronDown size={36} />
-                                    </button>
                                 </div>
                                 <div>
                                     <p className="text-gray-700 mb-4">{answer.text}</p>
