@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
 
 const SubchapterContent = () => {
   const [blocks, setBlocks] = useState([]);
+  const [imageDimensions, setImageDimensions] = useState({}); // Single state for all images
+  const imgRef = useRef(null); // Declare useRef outside
+
   const subChapterId = "66ffbe63ededbf0e6f3837f6"; // Set subchapter id
 
   useEffect(() => {
@@ -30,6 +33,13 @@ const SubchapterContent = () => {
 
     fetchSubChapterContent();
   }, [subChapterId]);
+
+  const handleImageLoad = () => {
+    if (imgRef.current) {
+      const { naturalWidth, naturalHeight } = imgRef.current;
+      setImageDimensions({ width: naturalWidth, height: naturalHeight });
+    }
+  };
 
   const getYouTubeEmbedUrl = (url) => {
     const videoId = url.split("v=")[1];
@@ -85,37 +95,47 @@ const SubchapterContent = () => {
           </ul>
         );
 
-      case "image":
-        if (block.data.caption) {
+        case "image":
+          // If there is a caption
+          if (block.data.caption) {
+            return (
+              <div key={block.id} className="mb-6 flex items-start space-x-4">
+                <img
+                  ref={imgRef}
+                  src={block.data.file.url}
+                  alt={block.data.caption || "Image"}
+                  className="max-w-1/2 object-contain rounded"
+                  onLoad={handleImageLoad}
+                  style={{
+                    width: '50%', // Image takes up 50% of the width if caption exists
+                    height: 'auto',
+                    maxHeight: '400px', // Limit the height
+                  }}
+                />
+                <p
+                  className="flex-1 text-lg text-gray-300 self-center"
+                  dangerouslySetInnerHTML={{ __html: block.data.caption }}
+                ></p>
+              </div>
+            );
+          }
+        
+          // If there is no caption
           return (
-            <div key={block.id} className="mb-6 flex items-start">
-              {/* Image takes its real width dynamically */}
+            <div key={block.id} className="mb-6 flex justify-center">
               <img
-                src={block.data.file.url}
-                alt={block.data.caption || "Image"}
-                className="max-w-full object-contain rounded"
-                style={{ maxWidth: "60%" }} // Image can take up to 60% of the container's width
-              />
-              {/* Caption takes the remaining space dynamically */}
-              <p
-                className="flex-1 text-lg text-gray-300 ml-10 self-start"
-                dangerouslySetInnerHTML={{ __html: block.data.caption }}
-              ></p>
-            </div>
-          );
-        } else {
-          return (
-            <div key={block.id} className="mb-6">
-              {/* Image takes full width if no caption */}
-              <img
+                ref={imgRef}
                 src={block.data.file.url}
                 alt="Image"
-                className="w-full object-contain rounded"
+                className="w-3/5 object-contain rounded" // 60% width for images without captions
+                onLoad={handleImageLoad}
+                style={{
+                  width: '35%', // Image takes up 60% of the width without captions
+                  height: 'auto',
+                }}
               />
             </div>
           );
-        }
-
       case "quote":
         return (
           <blockquote
@@ -194,13 +214,13 @@ const SubchapterContent = () => {
           </pre>
         );
 
-        case "delimiter":
-          return (
-              <div key={block.id} className="my-8">
-                  <br />
-                  <br />
-              </div>
-          );
+      case "delimiter":
+        return (
+          <div key={block.id} className="my-8">
+            <br />
+            <br />
+          </div>
+        );
 
       case "warning":
         return (
@@ -219,19 +239,19 @@ const SubchapterContent = () => {
           </div>
         );
 
-        case "YoutubeEmbed":
-          return (
-              <div key={block.id} className="mb-6 relative w-full" style={{ paddingTop: "56.25%" }}>
-                  <iframe
-                      className="absolute top-0 left-0 w-full h-full"
-                      src={getYouTubeEmbedUrl(block.data.url)}
-                      title="YouTube video"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                  ></iframe>
-              </div>
-          );
+      case "YoutubeEmbed":
+        return (
+          <div key={block.id} className="mb-6 relative w-full" style={{ paddingTop: "56.25%" }}>
+            <iframe
+              className="absolute top-0 left-0 w-full h-full"
+              src={getYouTubeEmbedUrl(block.data.url)}
+              title="YouTube video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        );
 
       default:
         return null;
