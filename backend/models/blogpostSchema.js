@@ -1,31 +1,30 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
+const blockSchema = new Schema({
+    id: String,
+    type: String,
+    data: mongoose.Schema.Types.Mixed, // This is a generic data type that can store anything
+});
+
 const blogpostSchema = new Schema({
     title: {
         type: String,
-        required: [true,"Title is required"],
+        required: [true, "Title is required"],
     },
-    content: {
-        type: String,
-    },
-    author:{
+    author: {
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true,
     },
-    comments: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "Comment",
-        }
-    ],
-    reactions: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "Reaction",
-        }
-    ],  
+    blocks: [blockSchema],
+    thumbnail: {
+        type: String,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now, 
+    },
 });
 
 const Blogpost = mongoose.model("Blogpost", blogpostSchema);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axiosInstance from '../utils/axiosInstance'; // Import your custom Axios instance
 
 const QuizPage = () => {
-  const subchapterId = '66f99c78e5ca85e2717f0315';
+  const subchapterId = '';
   const [quizData, setQuizData] = useState([]);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
