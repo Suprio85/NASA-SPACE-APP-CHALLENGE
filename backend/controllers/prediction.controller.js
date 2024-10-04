@@ -33,7 +33,6 @@ const predictExoplanetType = asyncHandler(async (req, res) => {
             return res.status(500).json({ message: "Error in prediction" });
         }
 
-        // Only return the final prediction to the client
         const outputLines = predictionResult.trim().split('\n');
         const finalPrediction = outputLines[outputLines.length - 1];  // Get the last line, which should be the prediction
         console.log(`Final prediction: ${finalPrediction}`);
@@ -46,12 +45,12 @@ const predictExoplanetType = asyncHandler(async (req, res) => {
 
 
 const predictExoplanetName = asyncHandler(async (req, res) => {
-    const {  } = req.body;
+    const {orbital_period, semi_majorAxis, radius, mass, flux, distance, eccentricity   } = req.body;
 
     const pathDir = path.join(__dirname, "..", 'scripts','MakeYourExoplanet', 'predict.py');
     console.log(pathDir);
     
-    const pythonProcess = spawn('python', [pathDir, distance, mass, radius, orbital]);
+    const pythonProcess = spawn('python', [pathDir, orbital_period, semi_majorAxis, radius, mass, flux, distance, eccentricity]);
 
     let predictionResult = '';
     let errorOccurred = false;
@@ -81,4 +80,4 @@ const predictExoplanetName = asyncHandler(async (req, res) => {
     });
 });
 
-export { predictExoplanetType };
+export { predictExoplanetType, predictExoplanetName };
