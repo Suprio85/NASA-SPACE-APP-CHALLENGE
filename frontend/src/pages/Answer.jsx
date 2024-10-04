@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { ChevronUp, ChevronDown, MessageSquare, Award, ArrowUp, Plus, X } from 'lucide-react';
 import EditorComponent from '../component/editorComponent';
 import axiosInstance from '../utils/axiosInstance';
@@ -124,119 +124,124 @@ const SidebarMenu = ({ selectedOption, setSelectedOption }) => {
 };
 
 // Main StackOverflowAnswerPage component
+
+//add { questionId }
 const StackOverflowAnswerPage = () => {
-  const [selectedOption, setSelectedOption] = useState("questions");
-  const [answers, setAnswers] = useState(dummyAnswers);
-
-  const handleVote = (id, direction) => {
-    setAnswers(prevAnswers =>
-      prevAnswers.map(answer =>
-        answer.id === id
-          ? { ...answer, votes: answer.votes + (direction === 'up' ? 1 : -1) }
-          : answer
-      )
-    );
-  };
-
-  const handleNewAnswer = (newAnswerData) => {
-    const newAnswer = {
-      id: answers.length + 1,
-      body: newAnswerData.blocks[0].data.text, // Simplified for demo
-      votes: 0,
-      answeredBy: "CurrentUser",
-      answeredAt: "just now",
-      isAccepted: false
+    const questionId = "66ff67a9b00be5fc465bf605"
+    const [selectedOption, setSelectedOption] = useState("questions");
+    const [question, setQuestion] = useState(null);
+    const [answers, setAnswers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+  
+    useEffect(() => {
+        const fetchQuestionAndAnswers = async () => {
+            try {
+              setLoading(true);
+              // Fetch question details
+              const questionResponse = await axiosInstance.post("/question/getquestionbyid", {
+                questionId: questionId // Wrap questionId in an object
+              });
+              setQuestion(questionResponse.data.question);
+          
+              // Fetch answers
+              const answersResponse = await axiosInstance.post('/question/getanswersbyquestion', { questionId });
+              setAnswers(answersResponse.data.answers);
+              setLoading(false);
+            } catch (err) {
+              console.error('Error fetching data:', err);
+              setError('Failed to load question and answers. Please try again later.');
+              setLoading(false);
+            }
+          };          
+  
+      fetchQuestionAndAnswers();
+    }, [questionId]);
+  
+    const handleVote = async (answerId, direction) => {
+      try {
+        await axiosInstance.post(`/answer/${answerId}/vote`, { direction });
+        // Refresh answers after voting
+        const response = await axiosInstance.post('/question/getanswersbyquestion', { questionId });
+        setAnswers(response.data.answers);
+      } catch (error) {
+        console.error('Failed to vote:', error);
+      }
     };
-    setAnswers(prevAnswers => [...prevAnswers, newAnswer]);
-  };
-
-  return (
-    <div className="flex h-screen font-Saira">
-      <SidebarMenu selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
-      <div className="w-4/5 p-6 bg-gray-100 overflow-y-auto">
-        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
-          <h1 className="text-2xl font-bold mb-4">{dummyQuestion.title}</h1>
-          <div className="flex items-start mb-8">
-            <div className="flex flex-col items-center mr-4">
-              <button className="text-gray-500 hover:text-orange-500">
-                <ChevronUp size={36} />
-              </button>
-              <span className="text-xl font-bold my-2">{dummyQuestion.votes}</span>
-              <button className="text-gray-500 hover:text-orange-500">
-                <ChevronDown size={36} />
-              </button>
-            </div>
-            <div>
-              <p className="text-gray-700 mb-4">{dummyQuestion.body}</p>
-              <div className="flex items-center text-sm text-gray-500">
-                <MessageSquare size={16} className="mr-1" />
-                <span className="mr-4">{dummyQuestion.views} views</span>
-                <span>Asked by {dummyQuestion.askedBy} {dummyQuestion.askedAt}</span>
+  
+    const handleNewAnswer = async (newAnswerData) => {
+      try {
+        await axiosInstance.post('/answer/add', {
+          questionId: questionId,
+          text: newAnswerData.blocks[0].data.text, // Simplified for demo
+        });
+        // Refresh answers after adding a new one
+        const response = await axiosInstance.post('/question/getanswersbyquestion', { questionId });
+        setAnswers(response.data.answers);
+      } catch (error) {
+        console.error('Failed to add answer:', error);
+      }
+    };
+  
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error}</div>;
+    if (!question) return <div>Question not found</div>;
+  
+    return (
+      <div className="flex h-screen font-Saira">
+        <SidebarMenu selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
+        <div className="w-4/5 p-6 bg-gray-100 overflow-y-auto">
+          <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
+            <h1 className="text-2xl font-bold mb-4">{question.title}</h1>
+            <div className="flex items-start mb-8">
+              <div className="flex flex-col items-center mr-4">
+                <button className="text-gray-500 hover:text-orange-500">
+                  <ChevronUp size={36} />
+                </button>
+                <span className="text-xl font-bold my-2">{question.upvotes}</span>
+                <button className="text-gray-500 hover:text-orange-500">
+                  <ChevronDown size={36} />
+                </button>
+              </div>
+              <div>
+                <p className="text-gray-700 mb-4">{question.text}</p>
+                <div className="flex items-center text-sm text-gray-500">
+                  <MessageSquare size={16} className="mr-1" />
+                  <span className="mr-4">{question.views} views</span>
+                  <span>Asked by {question.user.name} at {new Date(question.createdAt).toLocaleString()}</span>
+                </div>
               </div>
             </div>
-          </div>
-
-          <h2 className="text-xl font-bold mb-4">{answers.length} Answers</h2>
-          {answers.map(answer => (
-            <div key={answer.id} className="border-t pt-6 mb-6">
-              <div className="flex items-start">
-                <div className="flex flex-col items-center mr-4">
-                  <button onClick={() => handleVote(answer.id, 'up')} className="text-gray-500 hover:text-orange-500">
-                    <ChevronUp size={36} />
-                  </button>
-                  <span className="text-xl font-bold my-2">{answer.votes}</span>
-                  <button onClick={() => handleVote(answer.id, 'down')} className="text-gray-500 hover:text-orange-500">
-                    <ChevronDown size={36} />
-                  </button>
-                  {answer.isAccepted && (
-                    <Award size={36} className="text-green-500 mt-2" />
-                  )}
-                </div>
-                <div>
-                  <p className="text-gray-700 mb-4">{answer.body}</p>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <span>Answered by {answer.answeredBy} {answer.answeredAt}</span>
+  
+            <h2 className="text-xl font-bold mb-4">{answers.length} Answers</h2>
+            {answers.map(answer => (
+              <div key={answer._id} className="border-t pt-6 mb-6">
+                <div className="flex items-start">
+                  <div className="flex flex-col items-center mr-4">
+                    <button onClick={() => handleVote(answer._id, 'up')} className="text-gray-500 hover:text-orange-500">
+                      <ChevronUp size={36} />
+                    </button>
+                    <span className="text-xl font-bold my-2">{answer.upvotes}</span>
+                    <button onClick={() => handleVote(answer._id, 'down')} className="text-gray-500 hover:text-orange-500">
+                      <ChevronDown size={36} />
+                    </button>
+                  </div>
+                  <div>
+                    <p className="text-gray-700 mb-4">{answer.text}</p>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <span>Answered by {answer.user.name} at {new Date(answer.createdAt).toLocaleString()}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-
-          <h2 className="text-xl font-bold mb-4">Your Answer</h2>
-          <EditorComponent onSave={handleNewAnswer} />
+            ))}
+  
+            <h2 className="text-xl font-bold mb-4">Your Answer</h2>
+            <EditorComponent onSave={handleNewAnswer} />
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
-
-// Dummy data (same as before)
-const dummyQuestion = {
-  title: "How to implement a custom text editor in React?",
-  body: "I'm trying to create a custom text editor in my React application. I've looked into libraries like Draft.js and Quill, but I'm not sure which one to use or how to get started. Any advice or examples would be greatly appreciated!",
-  votes: 10,
-  views: 100,
-  askedBy: "ReactNewbie",
-  askedAt: "2 hours ago"
-};
-
-const dummyAnswers = [
-  {
-    id: 1,
-    body: "I recommend using the Editor.js library. It's highly customizable and has a great API. Here's a basic example of how you can implement it in React...",
-    votes: 5,
-    answeredBy: "ReactExpert",
-    answeredAt: "1 hour ago",
-    isAccepted: true
-  },
-  {
-    id: 2,
-    body: "Another option is to use Slate.js. It's a bit more low-level than Editor.js, but it gives you more control over the editing experience. Here's how you can get started...",
-    votes: 2,
-    answeredBy: "SlateEnthusiast",
-    answeredAt: "30 minutes ago",
-    isAccepted: false
-  }
-];
+    );
+  };
 
 export default StackOverflowAnswerPage;

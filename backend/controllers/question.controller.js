@@ -160,5 +160,23 @@ const getAnswersByQuestionId = async (req, res) => {
     }
 };
 
+const getQuestionbyId = async (req, res) => {
+    const { questionId } = req.body;
+    try {
+        const question = await Question.findById(questionId);
+        if (!question) {
+            return res.status(404).json({ message: "Question not found" });
+        }
+        return res.status(200).json({
+            message: "Question retrieved successfully",
+            question,
+        });
+    }
+    catch (error) {
+        return res.status(500).json({ message: "Failed to retrieve question", error: error.message });
+    }
+}
 
-export { addQuestion,getLatestQuestions,addAnswer,upvoteQuestion,upvoteAnswer,getAnswersByQuestionId };
+
+
+export { addQuestion,getLatestQuestions,addAnswer,upvoteQuestion,upvoteAnswer,getAnswersByQuestionId,getQuestionbyId };
