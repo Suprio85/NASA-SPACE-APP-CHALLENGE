@@ -2,6 +2,9 @@ import React, { useState,useEffect } from 'react';
 import { ChevronUp, ChevronDown, MessageSquare, Award, ArrowUp, Plus, X } from 'lucide-react';
 import EditorComponent from '../component/editorComponent';
 import axiosInstance from '../utils/axiosInstance';
+import AnswerComponent from '../component/AnswerComponent';
+
+
 
 // Button component
 const Button = ({ children, onClick, className, type = "button" }) => (
@@ -158,16 +161,20 @@ const StackOverflowAnswerPage = () => {
       fetchQuestionAndAnswers();
     }, [questionId]);
   
-    const handleVote = async (answerId, direction) => {
-      try {
-        await axiosInstance.post(`/answer/${answerId}/vote`, { direction });
-        // Refresh answers after voting
-        const response = await axiosInstance.post('/question/getanswersbyquestion', { questionId });
-        setAnswers(response.data.answers);
-      } catch (error) {
-        console.error('Failed to vote:', error);
-      }
-    };
+    const handleVote = async (answerId) => {
+        try {
+          await axiosInstance.post('/question/upvoteanswer', {
+            questionId: questionId,
+            answerId: answerId,
+          });
+      
+          // Refresh answers after upvoting
+          const response = await axiosInstance.post('/question/getanswersbyquestion', { questionId });
+          setAnswers(response.data.answers);
+        } catch (error) {
+          console.error('Failed to upvote:', error);
+        }
+      };
   
     const handleNewAnswer = async (newAnswerData) => {
       try {
@@ -237,7 +244,7 @@ const StackOverflowAnswerPage = () => {
             ))}
   
             <h2 className="text-xl font-bold mb-4">Your Answer</h2>
-            <EditorComponent onSave={handleNewAnswer} />
+            <AnswerComponent onSave={handleNewAnswer} />
           </div>
         </div>
       </div>
