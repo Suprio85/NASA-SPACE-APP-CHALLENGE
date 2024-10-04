@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronUp, MessageSquare, Award, ArrowUp, Plus, X } from 'lucide-react';
-import EditorComponent from '../component/editorComponent';
+import { ChevronUp, Plus, X } from 'lucide-react';
 import axiosInstance from '../utils/axiosInstance';
-import AnswerComponent from '../component/AnswerComponent';
 
 // Button component
 const Button = ({ children, onClick, className, type = "button", disabled = false }) => (
@@ -42,7 +40,7 @@ const AskQuestionModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [text, setText] = useState('');
   const [details, setDetails] = useState('');
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -127,152 +125,163 @@ const SidebarMenu = ({ selectedOption, setSelectedOption }) => {
 
 // Main StackOverflowAnswerPage component
 const StackOverflowAnswerPage = () => {
-    const questionId = "66ffbc57be252159072fc57d"
-    const [selectedOption, setSelectedOption] = useState("questions");
-    const [question, setQuestion] = useState(null);
-    const [answers, setAnswers] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [newAnswer, setNewAnswer] = useState(null);
+  const questionId = "66ffbc57be252159072fc57d";
+  const [selectedOption, setSelectedOption] = useState("questions");
+  const [question, setQuestion] = useState(null);
+  const [answers, setAnswers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [newAnswerText, setNewAnswerText] = useState('');
 
-    useEffect(() => {
-        const fetchQuestionAndAnswers = async () => {
-            try {
-                setLoading(true);
-                const questionResponse = await axiosInstance.post("/question/getquestionbyid", {
-                    questionId: questionId
-                });
-                setQuestion(questionResponse.data.question);
+  useEffect(() => {
+    const fetchQuestionAndAnswers = async () => {
+      try {
+        setLoading(true);
+        const questionResponse = await axiosInstance.post("/question/getquestionbyid", {
+          questionId: questionId
+        });
+        setQuestion(questionResponse.data.question);
 
-                const answersResponse = await axiosInstance.post('/question/getanswersbyquestion', { questionId });
-                setAnswers(answersResponse.data.answers);
-                console.log(answersResponse.data.answers);
-                setLoading(false);
-            } catch (err) {
-                console.error('Error fetching data:', err);
-                setError('Failed to load question and answers. Please try again later.');
-                setLoading(false);
-            }
-        };
+        const answersResponse = await axiosInstance.post('/question/getanswersbyquestion', { questionId });
+        setAnswers(answersResponse.data.answers);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError('Failed to load question and answers. Please try again later.');
+        setLoading(false);
+      }
+    };
 
-        fetchQuestionAndAnswers();
-    }, [questionId]);
+    fetchQuestionAndAnswers();
+  }, [questionId]);
 
-    const handleVote = async (answerId) => {
-        try {
-            // Optimistically update the UI
-            setAnswers(prevAnswers => prevAnswers.map(answer => {
-                if (answer._id === answerId) {
-                    const newUpvotes = answer.isLiked ? answer.upvotes - 1 : answer.upvotes + 1;
-                    return {
-                        ...answer,
-                        upvotes: newUpvotes,
-                        isLiked: !answer.isLiked
-                    };
-                }
-                return answer;
-            }));
-
-            // Send request to backend
-            const response = await axiosInstance.post('/question/upvoteanswer', {
-                questionId: questionId,
-                answerId: answerId,
-            });
-            
-            // Update with the response from the server to ensure consistency
-            setAnswers(prevAnswers => prevAnswers.map(answer => {
-                if (answer._id === answerId) {
-                    return {
-                        ...answer,
-                        upvotes: response.data.upvotes,
-                        isLiked: response.data.isLiked
-                    };
-                }
-                return answer;
-            }));
-        } catch (error) {
-            console.error('Failed to upvote:', error);
-            // Revert the optimistic update if the request fails
-            setAnswers(prevAnswers => prevAnswers.map(answer => {
-                if (answer._id === answerId) {
-                    const newUpvotes = answer.isLiked ? answer.upvotes + 1 : answer.upvotes - 1;
-                    return {
-                        ...answer,
-                        upvotes: newUpvotes,
-                        isLiked: !answer.isLiked
-                    };
-                }
-                return answer;
-            }));
+  const handleVote = async (answerId) => {
+    try {
+      // Optimistically update the UI
+      setAnswers(prevAnswers => prevAnswers.map(answer => {
+        if (answer._id === answerId) {
+          const newUpvotes = answer.isLiked ? answer.upvotes - 1 : answer.upvotes + 1;
+          return {
+            ...answer,
+            upvotes: newUpvotes,
+            isLiked: !answer.isLiked
+          };
         }
-    };
+        return answer;
+      }));
 
-    const handleNewAnswer = (newAnswerData) => {
-        setNewAnswer(newAnswerData);
-    };
-
-    const handleSaveAnswer = async () => {
-        if (!newAnswer) return;
-
-        try {
-            const response = await axiosInstance.post('/question/addanswer', {
-                questionId: questionId,
-                text: newAnswer.blocks[0].data.text, // Simplified for demo
-            });
-            setAnswers(response.data.answers);
-            setNewAnswer(null); // Clear the new answer after saving
-        } catch (error) {
-            console.error('Failed to add answer:', error);
+      // Send request to backend
+      const response = await axiosInstance.post('/question/upvoteanswer', {
+        questionId: questionId,
+        answerId: answerId,
+      });
+      
+      // Update with the response from the server to ensure consistency
+      setAnswers(prevAnswers => prevAnswers.map(answer => {
+        if (answer._id === answerId) {
+          return {
+            ...answer,
+            upvotes: response.data.upvotes,
+            isLiked: response.data.isLiked
+          };
         }
-    };
+        return answer;
+      }));
+    } catch (error) {
+      console.error('Failed to upvote:', error);
+      // Revert the optimistic update if the request fails
+      setAnswers(prevAnswers => prevAnswers.map(answer => {
+        if (answer._id === answerId) {
+          const newUpvotes = answer.isLiked ? answer.upvotes + 1 : answer.upvotes - 1;
+          return {
+            ...answer,
+            upvotes: newUpvotes,
+            isLiked: !answer.isLiked
+          };
+        }
+        return answer;
+      }));
+    }
+  };
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
-    if (!question) return <div>Question not found</div>;
+  const handleSaveAnswer = async () => {
+    if (!newAnswerText) return;
+  
+    try {
+      // Add the new answer
+      await axiosInstance.post('/question/addanswer', {
+        questionId: questionId,
+        text: newAnswerText,
+      });
+  
+      // Fetch updated list of answers
+      const updatedAnswersResponse = await axiosInstance.post('/question/getanswersbyquestion', {
+        questionId: questionId
+      });
+  
+      // Update the state with the newly fetched answers
+      setAnswers(updatedAnswersResponse.data.answers);
+      
+      // Clear the input field
+      setNewAnswerText('');
+    } catch (error) {
+      console.error('Failed to add answer and fetch updated answers:', error);
+    }
+  };
+  
 
-    return (
-        <div className="flex h-screen font-Saira absolute top-0 left-0 w-full">
-            <SidebarMenu selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
-            <div className="w-4/5 p-6 bg-gray-100 overflow-y-auto">
-                <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
-                    <h1 className="text-2xl font-bold mb-4">{question.text}</h1>
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (!question) return <div>Question not found</div>;
 
-                    <h2 className="text-xl font-bold mb-4">{answers.length} Answers</h2>
-                    {answers.map(answer => (
-                        <div key={answer._id} className="border-t pt-6 mb-6">
-                            <div className="flex items-start">
-                                <div className="flex flex-col items-center mr-4">
-                                    <button 
-                                        onClick={() => handleVote(answer._id)} 
-                                        className={`hover:text-orange-500 ${answer.isLiked ? 'text-orange-500' : 'text-gray-500'}`}
-                                    >
-                                        <ChevronUp size={36} />
-                                    </button>
-                                    <span className="text-xl font-bold my-2">{answer.upvotes}</span>
-                                </div>
-                                <div>
-                                    <p className="text-gray-700 mb-4">{answer.text}</p>
-                                    <div className="flex items-center text-sm text-gray-500">
-                                        <span>Answered by {answer.user.name} at {new Date(answer.createdAt).toLocaleString()}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
+  return (
+    <div className="flex h-screen font-Saira absolute top-0 left-0 w-full">
+      <SidebarMenu selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
+      <div className="w-4/5 p-6 bg-gray-100 overflow-y-auto">
+        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
+          <h1 className="text-2xl font-bold mb-4">{question.text}</h1>
 
-                    <h2 className="text-xl font-bold mb-4">Your Answer</h2>
-                    <AnswerComponent onSave={handleNewAnswer} />
-                    <Button
-                        onClick={handleSaveAnswer}
-                        className="mt-4 bg-blue-600 hover:bg-blue-700 text-white"
-                        disabled={!newAnswer}
-                    >
-                        Save Answer
-                    </Button>
+          <h2 className="text-xl font-bold mb-4">{answers.length} Answers</h2>
+          {answers.map(answer => (
+            <div key={answer._id} className="border-t pt-6 mb-6">
+              <div className="flex items-start">
+                <div className="flex flex-col items-center mr-4">
+                  <button 
+                    onClick={() => handleVote(answer._id)} 
+                    className={`hover:text-orange-500 ${answer.isLiked ? 'text-orange-500' : 'text-gray-500'}`}
+                  >
+                    <ChevronUp size={36} />
+                  </button>
+                  <span className="text-lg font-bold">{answer.upvotes}</span>
                 </div>
+                <div className="flex-1">
+                  <p className="text-gray-800">{answer.text}</p>
+                </div>
+              </div>
             </div>
+          ))}
+
+          {/* New Answer Section */}
+          <div className="border-t pt-6">
+            <h2 className="text-xl font-bold mb-4">Your Answer</h2>
+            <textarea
+              className="w-full p-3 rounded-md border border-gray-300 focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50"
+              value={newAnswerText}
+              onChange={(e) => setNewAnswerText(e.target.value)}
+              rows="4"
+              placeholder="Write your answer here..."
+            />
+            <Button
+              onClick={handleSaveAnswer}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white mt-4"
+            >
+              Save Answer
+            </Button>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default StackOverflowAnswerPage;
