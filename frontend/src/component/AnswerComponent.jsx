@@ -144,44 +144,9 @@ const AnswerComponent = ({ onSave, selectedSubChapterId }) => {
     };
   }, [selectedSubChapterId]);
 
-  const saveContent = async () => {
-    if (editorInstance.current) {
-      const content = await editorInstance.current.save();
-      console.log("Editor Content: ", content);
-
-      try {
-        let response;
-        if (selectedSubChapterId) {
-          response = await axiosInstance.post('/chapter/create', {
-            subChapterId: selectedSubChapterId,
-            blocks: content.blocks,
-          });
-          console.log("SubChapter saved:", response.data);
-        } else {
-          response = await axiosInstance.post('/blog/create', {
-            blocks: content.blocks,
-          });
-          console.log("Blog post created:", response.data);
-        }
-
-        if (onSave) {
-          onSave(response.data);
-        }
-      } catch (error) {
-        console.error("Error saving content:", error.response ? error.response.data : error.message);
-      }
-    }
-  };
-
   return (
     <div className="bg-gray-200 text-white">
       <div id="editorjs" className="flex-1 w-full p-20 overflow-y-auto"></div>
-      <button
-        onClick={saveContent}
-        className="fixed bottom-5 right-5 bg-blue-500 text-white py-2 px-4 rounded shadow-lg hover:bg-blue-600 transition-all duration-300"
-      >
-        Save Content
-      </button>
     </div>
   );
 };

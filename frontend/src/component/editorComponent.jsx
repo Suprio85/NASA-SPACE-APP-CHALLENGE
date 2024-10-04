@@ -223,7 +223,28 @@ const EditorComponent = ({ onSave, selectedSubChapterId }) => {
   return (
     <div className="bg-gray-900 text-white">
       <style jsx global>{`
-        /* ... (existing styles remain the same) */
+        .codex-editor {
+          color: white;
+        }
+        .ce-block__content, 
+        .ce-toolbar__content {
+          max-width: calc(100% - 80px) !important;
+        }
+        .cdx-block {
+          max-width: 100% !important;
+        }
+        .ce-toolbar__plus,
+        .ce-toolbar__settings-btn {
+          color: white !important;
+          background-color: #4B5563 !important;
+        }
+        .ce-toolbar__plus:hover,
+        .ce-toolbar__settings-btn:hover {
+          background-color: #6B7280 !important;
+        }
+        .codex-editor__redactor {
+          padding-bottom: 100px !important;
+        }
       `}</style>
       {!selectedSubChapterId && (
         <div className="mb-6 p-4 bg-gray-800 rounded-lg shadow-lg">
@@ -263,12 +284,12 @@ const EditorComponent = ({ onSave, selectedSubChapterId }) => {
         id="editorjs"
         className="flex-1 w-full p-20 overflow-y-auto"
       ></div>
-      {/* <button
+      <button
         onClick={saveContent}
         className="fixed bottom-5 right-5 bg-blue-500 text-white py-2 px-4 rounded shadow-lg hover:bg-blue-600 transition-all duration-300"
       >
         Save Content
-      </button> */}
+      </button>
     </div>
   );
 };
