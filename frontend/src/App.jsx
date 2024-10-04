@@ -30,6 +30,7 @@ import AddQuiz from './pages/AddQuiz.jsx'
 import Quiz from './pages/Quiz.jsx'
 import BlogPage from './pages/WriteBlog.jsx'
 import TestBlog from './pages/Blogpage.jsx'
+import Forum from './pages/Forum.jsx'
 
 function App() {
     // console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID)
@@ -64,6 +65,7 @@ function App() {
         <Route path='/quiz' element={<Quiz />} />
         <Route path='/blog' element={<BlogPage />} />
         <Route path='/testblog' element={< TestBlog />} />
+        <Route path='/forum' element={<Forum />} />
       </Routes>
       </Router>
       </UserProvider>

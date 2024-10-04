@@ -76,6 +76,87 @@ const addAnswer = async (req, res) => {
     }
 };
 
+const upvoteQuestion = async (req, res) => {
+    try {
+        const { questionId } = req.body;
+
+        // Check if question ID is provided
+        if (!questionId) {
+            return res.status(400).json({ message: "Question ID is required" });
+        }
+
+        // Find the question by ID and increment upvotes
+        const updatedQuestion = await Question.findByIdAndUpdate(
+            questionId,
+            { $inc: { upvotes: 1 } },
+            { new: true }
+        );
+
+        if (!updatedQuestion) {
+            return res.status(404).json({ message: "Question not found" });
+        }
+
+        return res.status(200).json({
+            message: "Question upvoted successfully",
+            question: updatedQuestion,
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Failed to upvote question", error: error.message });
+    }
+};
+
+const upvoteAnswer = async (req, res) => {
+    try {
+        const { answerId } = req.body;
+
+        // Check if answer ID is provided
+        if (!answerId) {
+            return res.status(400).json({ message: "Answer ID is required" });
+        }
+
+        // Find the answer by ID and increment upvotes
+        const updatedAnswer = await Answer.findByIdAndUpdate(
+            answerId,
+            { $inc: { upvotes: 1 } },
+            { new: true }
+        );
+
+        if (!updatedAnswer) {
+            return res.status(404).json({ message: "Answer not found" });
+        }
+
+        return res.status(200).json({
+            message: "Answer upvoted successfully",
+            answer: updatedAnswer,
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Failed to upvote answer", error: error.message });
+    }
+};
+
+const getAnswersByQuestionId = async (req, res) => {
+    try {
+        const { questionId } = req.body;
+
+        // Check if question ID is provided
+        if (!questionId) {
+            return res.status(400).json({ message: "Question ID is required" });
+        }
+
+        // Find answers associated with the specific question ID, sorted by upvotes
+        const answers = await Answer.find({ questionId })
+            .sort({ upvotes: -1, createdAt: -1 }) // Sort by upvotes first, then by latest
+            .populate("user", "name email") // Optionally populate user details
+            .exec();
+
+        return res.status(200).json({
+            message: "Answers retrieved successfully",
+            answers,
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Failed to retrieve answers", error: error.message });
+    }
+};
 
 
-export { addQuestion,getLatestQuestions,addAnswer };
+export { addQuestion,getLatestQuestions,addAnswer,upvoteQuestion,upvoteAnswer,getAnswersByQuestionId };
