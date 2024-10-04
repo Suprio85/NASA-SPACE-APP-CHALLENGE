@@ -31,31 +31,28 @@ const uploadImage = asyncHandler(async (req, res) => {
 
 const createSubChapter = async (req, res) => {
   try {
-    const { title, blocks, chapterId } = req.body;
+    const { title, blocks } = req.body;
 
-    // Check if all necessary data is provided
-    if (!title || !blocks || !chapterId) {
-      return res.json(new apiResponse(400, "Missing required fields"));
-    }
+    console.log(blocks);
+
+    return res.json(new apiResponse(201, "SubChapter Created Successfully"));
 
     // Create a new instance of the SubChapter model
-    const newSubChapter = new SubChapter({
-      title,
-      blocks, // Directly assign the blocks array from the frontend
-      chapter: chapterId, // Make sure the chapterId is included for subchapter association
-    });
+    //   const newSubChapter = new SubChapter({
+    //     title,
+    //     blocks,
+    //   });
 
-    // Save the subchapter to the database
-    const savedSubChapter = await newSubChapter.save();
+    //   // Save the subchapter to the database
+    //   const savedSubChapter = await newSubChapter.save();
 
-    // Respond with the saved subchapter
-    return res.json(new apiResponse(201, "SubChapter Created Successfully", savedSubChapter));
+    //   // Respond with the saved subchapter
+    //   return res.json(new apiResponse(201, "SubChapter Created Successfully", savedSubChapter));
   } catch (error) {
     console.error("Error creating subchapter:", error);
     return res.json(new apiResponse(500, "Error creating subchapter"));
   }
 };
-
 
 const getChapters = asyncHandler(async (req, res) => {
   try {
@@ -97,9 +94,8 @@ const addChapter = asyncHandler(async (req, res) => {
 });
 
 const getSubChapters = asyncHandler(async (req, res) => {
-    // console.log("getSubChapters");
     const { chapterId } = req.body; // Expect chapterId from the request body
-    
+
     try {
         // Validate chapterId is provided
         if (!chapterId) {
@@ -108,11 +104,11 @@ const getSubChapters = asyncHandler(async (req, res) => {
 
         // Fetch subchapters by the chapter reference
         const subChapters = await SubChapter.find({ chapter: chapterId });
-        console.log(subChapters);
+
         if (!subChapters.length) {
             return res.status(404).json(new apiResponse(404, "No subchapters found for this chapter"));
         }
-        
+
         return res.status(200).json(
             new apiResponse(200, "SubChapters fetched successfully", subChapters)
         );

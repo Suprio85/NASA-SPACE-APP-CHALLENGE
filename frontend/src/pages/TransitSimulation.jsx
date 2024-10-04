@@ -3,15 +3,17 @@ import * as THREE from "three";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import './transit.css';  // CSS for the background
 
 const TransitSimulation = () => {
   const mountRef = useRef(null);
   const [brightnessData, setBrightnessData] = useState([]);
-  const [starRadius, setStarRadius] = useState(2);
-  const [planetRadius, setPlanetRadius] = useState(0.5);
-  const [orbitRadius, setOrbitRadius] = useState(7);
-  const [speed, setSpeed] = useState(0.005);
+  const [starRadius, setStarRadius] = useState(2); // Default star radius
+  const [planetRadius, setPlanetRadius] = useState(0.5); // Default planet radius
+  const [orbitRadius, setOrbitRadius] = useState(7); // Default orbit radius
+  const [speed, setSpeed] = useState(0.005); // Default speed
 
+  // Initialize Three.js Scene
   useEffect(() => {
     const width = mountRef.current.clientWidth;
     const height = mountRef.current.clientHeight;
@@ -25,28 +27,11 @@ const TransitSimulation = () => {
     pointLight.position.set(10, 10, 10);
     scene.add(pointLight);
 
-    // Create background stars
-    const starsGeometry = new THREE.BufferGeometry();
-    const starsMaterial = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.1,
-      sizeAttenuation: true,
+    // Load starry background texture
+    const starTextureLoader = new THREE.TextureLoader();
+    const backgroundTexture = starTextureLoader.load('../assets/stars.jpg', () => {
+      scene.background = backgroundTexture; // Set the background texture once loaded
     });
-
-    const starsVertices = [];
-    for (let i = 0; i < 10000; i++) {
-      const x = THREE.MathUtils.randFloatSpread(2000);
-      const y = THREE.MathUtils.randFloatSpread(2000);
-      const z = THREE.MathUtils.randFloatSpread(2000);
-      starsVertices.push(x, y, z);
-    }
-
-    starsGeometry.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(starsVertices, 3)
-    );
-    const starField = new THREE.Points(starsGeometry, starsMaterial);
-    scene.add(starField);
 
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
     camera.position.set(10, 10, 10);
@@ -54,42 +39,26 @@ const TransitSimulation = () => {
 
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(width, height);
-    if (mountRef.current) {
-      mountRef.current.appendChild(renderer.domElement);
-    }
+    mountRef.current.appendChild(renderer.domElement);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
 
-    // Load textures
-    const textureLoader = new THREE.TextureLoader();
-    const sunTexture = textureLoader.load(
-      "https://cors-anywhere.herokuapp.com/https://img.freepik.com/free-photo/top-view-tie-dye-cloth_23-2148778171.jpg?t=st=1727715841~exp=1727719441~hmac=cf278e693fd37be9944141459c342cbe05dbedd0750af61197e3c78cbe364a8b&w=1380"
-    );
-    const planetTexture = textureLoader.load(
-      "https://cors-anywhere.herokuapp.com/https://img.freepik.com/free-photo/creative-abstract-mixed-red-color-painting-with-marble-liquid-effect-panorama_1258-91857.jpg?t=st=1727734167~exp=1727737767~hmac=2cb393e23f1bc8007a46c1901d29b85ac847bdc4b72f0092a5a3b43df4bd0295&w=740"
-    );
-
-    // Sun
     const starGeometry = new THREE.SphereGeometry(starRadius, 32, 32);
-    const starMaterial = new THREE.MeshPhongMaterial({
-      map: sunTexture,
-      emissive: 0xffff00,
-      emissiveIntensity: 0.5,
-    });
+    const starMaterial = new THREE.MeshPhongMaterial({ color: 0xffff00 });
     const star = new THREE.Mesh(starGeometry, starMaterial);
     scene.add(star);
 
-    // Planet
     const planetGeometry = new THREE.SphereGeometry(planetRadius, 32, 32);
-    const planetMaterial = new THREE.MeshPhongMaterial({ map: planetTexture });
+    const planetMaterial = new THREE.MeshPhongMaterial({ color: 0x0000ff });
     const planet = new THREE.Mesh(planetGeometry, planetMaterial);
     scene.add(planet);
 
-    // Orbit Path
+    // Define orbit path as a Line with no connections to center
     const orbitPoints = [];
-    const orbitSegments = 64;
+    const orbitSegments = 64; // Number of segments in the orbit
+
     for (let i = 0; i <= orbitSegments; i++) {
       const theta = (i / orbitSegments) * Math.PI * 2;
       const x = orbitRadius * Math.cos(theta);
@@ -111,30 +80,26 @@ const TransitSimulation = () => {
 
       controls.update();
 
-      // Rotate planet and sun around their own axes
-      planet.rotation.y += 0.01; // Planet rotating on its axis
-      star.rotation.y += 0.005; // Sun rotating on its axis
-
-      // Orbiting motion
-      angle += speed;
+      angle += speed; // Use speed state
+      // Update planet position based on circular orbit around the star
       planet.position.x = orbitRadius * Math.cos(angle);
       planet.position.z = orbitRadius * Math.sin(angle);
-      planet.position.y = 0;
+      planet.position.y = 0; // Keep the planet in the same plane
 
+      // Calculate vectors between star, planet, and camera
       const starToCamera = new THREE.Vector3();
       starToCamera.subVectors(camera.position, star.position).normalize();
 
       const starToPlanet = new THREE.Vector3();
       starToPlanet.subVectors(planet.position, star.position).normalize();
 
-      const isPlanetBlockingStar = starToCamera.dot(starToPlanet) > 0.999;
+      // Check if the planet is directly in front of the star from the camera's view
+      const isPlanetBlockingStar = starToCamera.dot(starToPlanet) > 0.999; // If vectors are very close (almost aligned)
 
-      const inTransit = isPlanetBlockingStar;
+      const inTransit = isPlanetBlockingStar; // True if the planet blocks the star in the current view
 
       const planetStarRatio = planetRadius / starRadius;
-      const transit = inTransit
-        ? maxBrightness * (1 - planetStarRatio)
-        : maxBrightness;
+      const transit = inTransit ? maxBrightness * (1 - planetStarRatio) : maxBrightness;
 
       brightnessHistory.push(transit);
 
@@ -148,12 +113,11 @@ const TransitSimulation = () => {
 
     return () => {
       controls.dispose();
-      if (mountRef.current && renderer.domElement) {
-        mountRef.current.removeChild(renderer.domElement);
-      }
+      mountRef.current.removeChild(renderer.domElement);
     };
-  }, [starRadius, planetRadius, orbitRadius, speed]);
+  }, [starRadius, planetRadius, orbitRadius, speed]); // Add speed to dependencies
 
+  // Data for Light Curve Chart
   const chartData = {
     labels: Array(brightnessData.length).fill(""),
     datasets: [
@@ -168,41 +132,37 @@ const TransitSimulation = () => {
   };
 
   return (
-    <div className="w-full h-screen relative top-0 left-0">
-      <div ref={mountRef} className="absolute inset-0 w-full"></div>
-      <div className="flex-col rounded-full font-Saira font-bold text-slate-400 text-3xl flex justify-center items-start">
-        <div className="p-1 rounded-md ml-10 mt-10 font-Titiliuam z-50">
-          Transit Method Simulation
-        </div>
+    <div className="w-full h-screen relative">
+      {/* 3D Simulation */}
+      <div ref={mountRef} className="absolute inset-0"></div>
+
+      {/* Light Curve Graph */}
+      <div className="absolute bottom-5 right-5 w-72 h-48 p-4 bg-gray-900 bg-opacity-75 rounded-lg">
+        <Line data={chartData} />
       </div>
 
-      <div className="fixed h-screen w-72 top-0 right-10 flex justify-center items-center">
-        <div className="w-72 h-48 p-4 bg-gray-900 bg-opacity-75 rounded-lg">
-          <Line data={chartData} />
-        </div>
-      </div>
-
-      <div className="absolute bottom-10 left-10 w-60 bg-opacity-75 rounded-lg font-semibold">
+      {/* Controls for Star, Planet, and Orbit Radius */}
+      <div className="absolute top-5 left-5 p-4 bg-gray-900 bg-opacity-75 rounded-lg">
         <label className="block text-white">Star Radius: {starRadius}</label>
         <input
           type="range"
-          min="2"
+          min="2" // Minimum star radius set to 2
           max="5"
           step="0.1"
           value={starRadius}
           onChange={(e) => setStarRadius(parseFloat(e.target.value))}
-          className="w-full range bg-gray-700 bg-opacity-30"
+          className="w-full"
         />
 
         <label className="block text-white mt-4">Planet Radius: {planetRadius}</label>
         <input
           type="range"
           min="0.1"
-          max="0.75"
+          max="0.75" // Maximum planet radius set to 0.75
           step="0.01"
           value={planetRadius}
           onChange={(e) => setPlanetRadius(parseFloat(e.target.value))}
-          className="w-full range bg-gray-700 bg-opacity-30"
+          className="w-full"
         />
 
         <label className="block text-white mt-4">Orbit Radius: {orbitRadius}</label>
@@ -213,9 +173,10 @@ const TransitSimulation = () => {
           step="0.1"
           value={orbitRadius}
           onChange={(e) => setOrbitRadius(parseFloat(e.target.value))}
-          className="w-full range bg-gray-700 bg-opacity-30"
+          className="w-full"
         />
 
+        {/* Slider for Speed Control */}
         <label className="block text-white mt-4">Speed: {speed.toFixed(3)}</label>
         <input
           type="range"
@@ -224,11 +185,11 @@ const TransitSimulation = () => {
           step="0.001"
           value={speed}
           onChange={(e) => setSpeed(parseFloat(e.target.value))}
-          className="w-full range bg-gray-700 bg-opacity-30"
+          className="w-full"
         />
       </div>
     </div>
   );
 };
 
-export default TransitSimulation;
+export default TransitSimulation; 

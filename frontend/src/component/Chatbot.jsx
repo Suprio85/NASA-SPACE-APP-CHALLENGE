@@ -62,22 +62,21 @@ const Chatbot = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-10  right-10  text-white   focus:outline-none focus:ring-2 focus:ring-blue-500"
-          style={{ zIndex: '1000000' }}
+          className="fixed bottom-10 z-50 right-10  text-white   focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <img src={Logo} alt="Chatbot" className="w-20 h-20" />
         </button>
       )}
       {
-        isOpen && (<div className='w-screen h-screen fixed top-0 left-0 bg-slate-950 bg-opacity-70 ' style={{ zIndex: '5000' }}>
+        isOpen && ( <div className='w-screen h-screen fixed top-0 left-0 bg-slate-950 bg-opacity-70 ' style={{zIndex:'500'}}>
 
         </div>)
       }
       <div
-        className={`fixed rounded-2xl m-10 ${isOpen ? 'mr-10' : 'mr-0'} inset-y-0 right-0 w-1/2 bg-slate-950 border-l-2 border-slate-700 shadow-lg transform ${isOpen ? 'translate-x-0 ' : 'translate-x-full '} transition-transform duration-300 ease-in-out flex flex-col`} style={{ zIndex: 10000000 }}
+        className={`fixed rounded-2xl m-10 ${isOpen ? 'mr-10' : 'mr-0'} inset-y-0 right-0 w-1/2 bg-slate-950 border-l-2 border-slate-700 shadow-lg transform ${isOpen ? 'translate-x-0 ' : 'translate-x-full '} transition-transform duration-300 ease-in-out flex flex-col`} style={{ zIndex: 1000 }}
       >
         <div className="flex justify-between items-center p-4 border-b  border-slate-600">
-          <h2 className="text-lg  flex w-full justify-start items-start gap-2 font-Saira font-bold ml-5">ASK <div className='w-16'><OrbitName /></div></h2>
+          <h2 className="text-lg  flex w-full justify-start items-start gap-2 font-Saira font-bold ml-5">ASK <div className='w-16'><OrbitName/></div></h2>
           <button
             onClick={() => setIsOpen(false)}
             className="text-gray-500 hover:text-gray-700 focus:outline-none"
@@ -108,12 +107,12 @@ const Chatbot = () => {
                     <div className="w-10 h-10 rounded-full  flex items-center mx-2 justify-center text-white font-bold">
                       <div className=' w-10 h-10'><img src={Avatar2} alt="Chatbot" className="" /></div>
                     </div>
-
+                    
                   )}
                   <div
                     className={`w-2/3 px-4 py-2 rounded-lg ${chat.sender === 'user'
-                      ? 'bg-slate-900 text-slate-300 font-Saira'
-                      : 'bg-slate-700 text-white font-Saira'
+                        ? 'bg-slate-900 text-slate-300 font-Saira'
+                        : 'bg-slate-700 text-white font-Saira'
                       }`}
                   >
                     <ReactMarkdown>{chat.text}</ReactMarkdown>

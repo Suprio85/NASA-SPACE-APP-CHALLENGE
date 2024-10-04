@@ -80,9 +80,9 @@ const LogInPage = () => {
             <div className="z-10 text-slate-200 font-Saira text-xl">Log In</div>
             <img src={planet3} alt="planet3" className="h-full w-full object-cover absolute opacity-50" />
           </button>
-          <div className="w-full ">
-            <button  className="flex justify-center items-center bg-white w-full h-12 overflow-hidden relative rounded-lg ">
-            {/* <img src={planet2} alt="planet2" className="h-full w-full object-cover absolute opacity-50" /> */}
+          <div className="w-full">
+            <button  className="btn w-1/2 h-12 overflow-hidden relative rounded-lg mb-4">
+            <img src={planet2} alt="planet2" className="h-full w-full object-cover absolute opacity-50" />
             <GoogleLogin 
               onSuccess={handleLoginSuccess}
             />

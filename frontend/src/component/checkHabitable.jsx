@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Stars, Text } from "@react-three/drei";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 
 const checkTemp = (temp,luminosity,semiMajorAxis) => {
@@ -87,8 +87,11 @@ const Planet = ({ radius, position, name, textureUrl, orbitRadius, temp, luminos
         }}
         onPointerOut={() => onHover(null)}
       >
-        <sphereGeometry args={[radius, 64, 64]} />
-        <meshStandardMaterial color={color} map={texture} emissive={color} emissiveIntensity={luminosity / 10} />
+        <sphereGeometry args={[radius, 64, 64]} /> 
+        { name === "Earth" ? <meshStandardMaterial  map={texture} /> :
+         <meshStandardMaterial color={color} map={texture} emissive={color} emissiveIntensity={luminosity / 10} />
+          
+        }
       </mesh>
       <Text
         position={[-5, radius + 0.5, 0]}
@@ -110,7 +113,7 @@ const Star = () => {
   useEffect(() => {
     const loader = new THREE.TextureLoader();
     loader.load(
-      "https://cors-anywhere.herokuapp.com/https://img.freepik.com/free-photo/top-view-tie-dye-cloth_23-2148778171.jpg?t=st=1727715841~exp=1727719441~hmac=cf278e693fd37be9944141459c342cbe05dbedd0750af61197e3c78cbe364a8b&w=1380",
+      "/Textureimg/sun.jpg",
       (loadedTexture) => {
         setTexture(loadedTexture);
       },
@@ -136,10 +139,39 @@ const Star = () => {
   );
 };
 
+const HabitableZone = ({ innerRadius, outerRadius }) => {
+  return (
+    <group>
+      <mesh rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[innerRadius, outerRadius, 64]} />
+        <meshBasicMaterial color="#00ff00" transparent opacity={0.1} side={THREE.DoubleSide} />
+      </mesh>
+      <Text
+        position={[0, 0.5, -innerRadius]}
+        fontSize={0.3}
+        color="green"
+        anchorX="center"
+        anchorY="middle"
+      >
+        Inner HZ
+      </Text>
+      <Text
+        position={[0, 0.5, -outerRadius]}
+        fontSize={0.3}
+        color="green"
+        anchorX="center"
+        anchorY="middle"
+      >
+        Outer HZ
+      </Text>
+    </group>
+  );
+};
+
 const Orbit = ({ radius }) => (
   <mesh rotation={[-Math.PI / 2, 0, 0]}>
-    <ringGeometry args={[radius, radius + 0.05, 64]} />
-    <meshBasicMaterial color="#ffffff" transparent opacity={0.3} side={THREE.DoubleSide} />
+    <ringGeometry args={[radius, radius + 0.1, 64]} />
+    <meshBasicMaterial color="#ffffff" transparent opacity={0.5} side={THREE.DoubleSide} />
   </mesh>
 );
 
@@ -209,22 +241,44 @@ const SolarSystem = ({ isAnimated, onHover }) => (
   </group>
 );
 
-const ExoplanetSystem = ({ planet, isAnimated, onHover }) => (
-  <group>
-    <Star />
-    <Orbit radius={planet.distance * 2} />
-    <Planet
-      name={planet.name}
-      radius={planet.radius * 0.3}
-      position={isAnimated ? [planet.distance * 0, 0, 0] : [planet.distance * 0, 0, 0]}
-      textureUrl="/Textureimg/exoplanet.jpg"
-      orbitRadius={isAnimated ? planet.distance * 2 : null}
-      temp={planet.temp}
-      luminosity={planet.luminosity}
-      onHover={onHover}
-    />
-  </group>
-);
+
+const ExoplanetSystem = ({ planet, isAnimated, onHover }) => {
+  const planetRef = useRef();
+  const starRef = useRef();
+
+  const innerHabitable = Math.sqrt(planet.luminosity * 0.95) * 2;
+  const outerHabitable = Math.sqrt(planet.luminosity * 1.4) * 2+0.56;
+
+  useFrame(({ clock }) => {
+    if (isAnimated && planetRef.current) {
+      const angle = clock.getElapsedTime() * 0.5;
+      planetRef.current.position.x = Math.cos(angle) * planet.distance * 2;
+      planetRef.current.position.z = Math.sin(angle) * planet.distance * 2;
+    }
+    if (starRef.current) {
+      starRef.current.rotation.y += 0.007;
+    }
+  });
+
+  return (
+    <group>
+      <Star ref={starRef} />
+      <HabitableZone innerRadius={innerHabitable} outerRadius={outerHabitable} />
+      <Orbit radius={planet.distance * 2} />
+      <group ref={planetRef}>
+        <Planet
+          name={planet.name}
+          radius={planet.radius * 0.3}
+          position={[0, 0, 0]}
+          textureUrl="/Textureimg/exoplanet.jpg"
+          temp={planet.temp}
+          luminosity={planet.luminosity}
+          onHover={onHover}
+        />
+      </group>
+    </group>
+  );
+};
 
 const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
   const [planet, setPlanet] = useState({
@@ -244,7 +298,7 @@ const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
     distance: planet.distance,
     luminosity: planet.luminosity,
   });
-  const [isAnimated, setIsAnimated] = useState(false);
+  const [isAnimated, setIsAnimated] = useState(true);
   const [verdict, setVerdict] = useState(null);
   const [hoverInfo, setHoverInfo] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });

@@ -1,18 +1,7 @@
 import React from 'react';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Button from './button';
-const Chapter = ({ title, story, image, buttontext, Linkto, dir }) => {
-    useEffect(() => {
-        AOS.init({
-            duration: 1000, // You can customize the animation duration here
-            easing: 'ease-in-out', // Custom easing function
-            once: true, // Whether animation should happen only once
-        });
-    }, []);
-
+const Chapter = ({ title, story, image,buttontext,Linkto, dir }) => {
     // Function to handle line breaks in the story content
     const renderStoryWithLineBreaks = (story) => {
         return story.split('\n').map((line, index) => (
@@ -25,9 +14,9 @@ const Chapter = ({ title, story, image, buttontext, Linkto, dir }) => {
 
     return (
         <div className="mx-60 mt-60">
-            <div className='' data-aos={`${dir === "ltr" ? "fade-right":"fade-left"}`}>
-                <div className="text-3xl text-white font-Saira font-bold" >{title}</div>
-                <div className={`flex items-center mt-10 ${dir === "ltr" ? "flex-row-reverse" : ""}`} >
+            <div>
+                <div className="text-3xl text-white font-Saira font-bold">{title}</div>
+                <div className={`flex items-center mt-10 ${dir === "ltr" ? "flex-row-reverse" : ""}`}>
                     <div className="flex items-center mt-10">
                         <img src={image} alt="Chapter Illustration" className="w-full mr-3" />
                     </div>
@@ -37,10 +26,10 @@ const Chapter = ({ title, story, image, buttontext, Linkto, dir }) => {
                 </div>
                 {
                     Linkto === undefined ? null : <div className="mt-10">
-                        <Link to={Linkto}><Button text={buttontext} /></Link>
-                    </div>
+                    <Link to={Linkto}><Button text={buttontext} /></Link>
+                </div>
                 }
-
+                   
             </div>
         </div>
     );

@@ -15,21 +15,33 @@ const googleLogin = asyncHandler(async (req, res) => {
   }
 
   const user = await verifyToken(token);
+    console.log("User before existing user:", user);
 
-  const existingUser = await User.findOne({ email: user.email });
+  let existingUser = await User.findOne({ email: user.email });
+
+  console.log("Existing user before:", existingUser);
     if (!existingUser){
-        const newUser = new User({
+      try{
+        existingUser = new User({
             name: user.name,
             email: user.email,
             image_url: user.image_url,
         });
-        await newUser.save();
+        console.log("existing user before save:", existingUser)
+        await existingUser.save();
+        console.log("existing user after save:", existingUser)
+        }catch(error){
+            console.log("Error in saving user:",error);
+        }
+
     } 
+
+    console.log("existing user After:", existingUser)
 
   const response = {
     message: "Google login successful",
-    user: user,
-    token: generateToken(user),
+    user: existingUser,
+    token: generateToken(existingUser),
   };
 
   res.json(response);

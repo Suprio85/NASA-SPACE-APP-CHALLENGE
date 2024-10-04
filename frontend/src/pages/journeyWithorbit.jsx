@@ -9,11 +9,9 @@ import char5 from "../assets/SVG/char5.svg";
 import char6 from "../assets/SVG/char6.svg";
 import char7 from "../assets/SVG/char7.svg";
 import char9 from "../assets/SVG/char9.svg";
-import char10 from "../assets/SVG/char10.svg";
 import planet4 from "../assets/SVG/planet4.svg";
 import planet5 from "../assets/SVG/planet5.svg";
 import planet6 from "../assets/SVG/planet6.svg";
-import Typist from 'react-typist';
 
 
 import Chapter from "../component/Chapter";
@@ -77,18 +75,10 @@ const JourneyWithorbit = () => {
             dir: "ltr",
         },
         {
-            title: "“How We Find Exoplanets”",
-            story: "Orbit floated silently among the stars, his sensors glowing faintly as he scanned the vast expanse of space.\n\n“Finding planets in distant star systems might sound impossible,” he began, a smile flickering on his screen. “But scientists have figured out some pretty amazing ways to discover these hidden worlds.”\n\nHe paused, pointing to a distant star.n\n“Want to know how we find exoplanets—planets that orbit stars far, far away? There are some really cool techniques! From watching stars flicker, to seeing them wobble, to even taking pictures of planets themselves.”\n\nOrbit floated closer, his sensors beeping with excitement.\n\n“But that’s just a glimpse! Click below to expand the story and learn about all the different methods we use to find exoplanets. It’s a journey full of discovery and wonder!”",
-            image: char10,
-            dir: "rtl",
-            buttontext: "Discovery Methods",
-            Linkto: "/howwefindexoplanets"
-        },
-        {
             title: "“The Future of Exoplanet Exploration”",
             story: "Orbit’s sensors buzzed with anticipation as he looked out across the vast universe.\n\n“Our adventure doesn’t end here, fellow explorer. There are so many more exoplanets waiting to be discovered. With new telescopes like the James Webb Space Telescope, we’ll soon be able to study these planets in even more detail.”\n\nOrbit glowed brightly.\n\n“The search for life, for new worlds, for distant planets, has only just begun. And who knows? Maybe one day, we’ll visit these worlds ourselves!”\n\nOrbit smiled as he prepared for the next big discovery, knowing that the universe is full of endless possibilities.",
             image: char7,
-            dir: "ltr",
+            dir: "rtl",
         },
     ];
 
@@ -99,36 +89,15 @@ const JourneyWithorbit = () => {
                     <img src={story_bg_1} alt="story_bg_1" className="" />
                 </div>
                 <div className="flex mx-60 justify-center items-center">
-                    <div className="w-1/2">
-                        <img src={char2} alt="char2" className="w-3/4 animate-shake" />
+                    <div className="w-full">
+                        <img src={char2} alt="char2" className="w-3/4" />
                     </div>
-                    <div className="flex w-full  flex-col justify-center items-start text-3xl text-white font-Saira h-screen">
-                        <div className="bg-slate-900 h-80 p-8 flex flex-col justify-center items-start rounded-md border-2 border-slate-500 bg-opacity-50 w-full" >
-                            {/* <div className="flex justify-center items-center">
-                                Hey there, space explorers! I’m <div className="w-24 mx-2"><OrbitName /></div>,
-                            </div>
-                            <div>
-                                your guide to the stars. Today, I’m going to tell you a story about exoplanets—planets that exist outside our solar system. Buckle up, because we’re about to embark on an exciting journey across the galaxy!
-                            </div> */}
-                            <div className=" flex justify-normal items-center">
-                                <div className="w-full h-full">
-                                        <div className="flex justify-start items-center">
-                                    <Typist avgTypingDelay={30} cursor={{ show: true, blink: true, element: '|', hideWhenDone: true }}>
-                                            Hey there, space explorers! I’m Orbit
-                                            {/* <span className="w-24 mx-2">
-                                            <OrbitName />
-                                        </span>
-                                        , */}
-                                        <Typist.Delay ms={500} /> {/* Optional: Adds a pause before continuing */}
-                                        
-                                            your guide to the stars. Today, I’m going to tell you a story about
-                                            exoplanets—planets that exist outside our solar system. Buckle up,
-                                            because we’re about to embark on an exciting journey across the galaxy!
-                                        
-                                    </Typist>
-                                        </div>
-                                </div>
-                            </div>
+                    <div className="flex flex-col justify-center items-start text-3xl text-white font-Saira h-screen">
+                        <div className="flex justify-center items-center">
+                            Hey there, space explorers! I’m <div className="w-24 mx-2"><OrbitName /></div>,
+                        </div>
+                        <div>
+                            your guide to the stars. Today, I’m going to tell you a story about exoplanets—planets that exist outside our solar system. Buckle up, because we’re about to embark on an exciting journey across the galaxy!
                         </div>
                     </div>
                 </div>
