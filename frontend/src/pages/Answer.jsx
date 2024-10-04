@@ -211,20 +211,20 @@ const StackOverflowAnswerPage = () => {
         setNewAnswer(newAnswerData);
     };
 
-    const handleSaveAnswer = async () => {
-        if (!newAnswer) return;
+    // const handleSaveAnswer = async () => {
+    //     if (!newAnswer) return;
 
-        try {
-            const response = await axiosInstance.post('/question/addanswer', {
-                questionId: questionId,
-                text: newAnswer.blocks[0].data.text, // Simplified for demo
-            });
-            setAnswers(response.data.answers);
-            setNewAnswer(null); // Clear the new answer after saving
-        } catch (error) {
-            console.error('Failed to add answer:', error);
-        }
-    };
+    //     try {
+    //         const response = await axiosInstance.post('/question/addanswer', {
+    //             questionId: questionId,
+    //             text: newAnswer.blocks[0].data.text, // Simplified for demo
+    //         });
+    //         setAnswers(response.data.answers);
+    //         setNewAnswer(null); // Clear the new answer after saving
+    //     } catch (error) {
+    //         console.error('Failed to add answer:', error);
+    //     }
+    // };
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
@@ -262,13 +262,13 @@ const StackOverflowAnswerPage = () => {
 
                     <h2 className="text-xl font-bold mb-4">Your Answer</h2>
                     <AnswerComponent onSave={handleNewAnswer} />
-                    <Button
+                    {/* <Button
                         onClick={handleSaveAnswer}
                         className="mt-4 bg-blue-600 hover:bg-blue-700 text-white"
                         disabled={!newAnswer}
                     >
                         Save Answer
-                    </Button>
+                    </Button> */}
                 </div>
             </div>
         </div>

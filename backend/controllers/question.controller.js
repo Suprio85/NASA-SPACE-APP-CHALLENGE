@@ -2,6 +2,7 @@ import Question from "../models/questionSchema.js";
 import Answer from "../models/answerSchema.js";
 import UpvoteQuestion from "../models/upvoteQuestionSchema.js";
 import Upvote from "../models/upvoteAnswerSchema.js";
+import {mongoose} from "mongoose";
 
 const addQuestion = async (req, res) => {
     try {
@@ -67,32 +68,33 @@ const getLatestQuestions = async (req, res) => {
 
 const addAnswer = async (req, res) => {
     try {
-        const { questionId, text } = req.body;
+        const { questionId, blocks } = req.body;
         const userId = req.user._id;
 
-        // Check if required fields are present
-        if (!questionId || !text || !userId) {
-            return res.status(400).json({ message: "Question ID, answer text, and user ID are required" });
+        console.log("reached");
+        
+        // Validate required fields
+        if (!questionId || !blocks || !userId) {
+            return res.status(400).json({ message: "All fields are required" });
         }
 
-        // Create a new answer document
-        const newAnswer = new Answer({
-            questionId,
-            text,
-            user: userId,  // Assuming userId is being passed in the request body
+        // Create the new answer document
+        const answer = new Answer({
+            questionId: new mongoose.Types.ObjectId(questionId),
+            blocks,
+            user: new mongoose.Types.ObjectId(userId),
         });
 
-        // Save the answer to the database
-        const savedAnswer = await newAnswer.save();
+        // Save answer to the database
+        const savedAnswer = await answer.save();
 
-        return res.status(201).json({
-            message: "Answer added successfully",
-            answer: savedAnswer,
-        });
+        res.status(201).json({ message: "Answer added successfully", answer: savedAnswer });
     } catch (error) {
-        return res.status(500).json({ message: "Failed to add answer", error: error.message });
+        console.error("Error adding answer:", error);
+        res.status(500).json({ message: "Failed to add answer" });
     }
 };
+
 
 const upvoteQuestion = async (req, res) => {
     const { questionId } = req.body;

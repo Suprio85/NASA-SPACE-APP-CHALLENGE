@@ -1,16 +1,21 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
+// Define blockSchema
+const blockSchema = new Schema({
+    id: String,
+    type: String,
+    data: Schema.Types.Mixed, // Generic data type for storing any kind of data
+});
+
+// Define answerSchema
 const answerSchema = new Schema({
     questionId: {
         type: Schema.Types.ObjectId,
         ref: "Question",
         required: true,
     },
-    text: {
-        type: String,
-        required: [true, "Answer text is required"],
-    },
+    blocks: [blockSchema], // Replaces `text` with an array of blocks
     user: {
         type: Schema.Types.ObjectId,
         ref: "User",
@@ -31,4 +36,3 @@ const answerSchema = new Schema({
 const Answer = mongoose.model("Answer", answerSchema);
 
 export default Answer;
-
