@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const ChapterComponent = ({ chapter }) => {
+
+  console.log(chapter);
   
-    chapter = {
-        _id: "1",
-        title: "Chapter 1",
-        content: "This is chapter 1",
-    }
+    // chapter = {
+    //     _id: "1",
+    //     title: "Chapter 1",
+    //     content: "This is chapter 1",
+    // }
   const [isOpen, setIsOpen] = useState(false); // Control visibility of subchapters
   const [subChapters, setSubChapters] = useState([]);
 
@@ -18,7 +20,8 @@ const ChapterComponent = ({ chapter }) => {
     if (!subChapters.length && !isOpen) {
       try {
         const response = await axios.post('http://localhost:3000/api/v1/chapter/getsubChapters', { chapterId: chapter._id });
-        setSubChapters(response.data.data);
+        setSubChapters(response.data.message);
+        console.log(response.data.data.message);
       } catch (error) {
         console.error("Error fetching subchapters:", error);
       }

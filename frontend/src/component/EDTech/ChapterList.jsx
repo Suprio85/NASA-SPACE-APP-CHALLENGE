@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import ChapterComponent from './ChapterComponent';
+import ChapterComponent from './Chapter.jsx';
 
 const ChapterList = () => {
   const [chapters, setChapters] = useState([]);
@@ -9,8 +9,9 @@ const ChapterList = () => {
     // Fetch all chapters from the backend
     const fetchChapters = async () => {
       try {
-        const response = await axios.get('/api/chapters');
-        setChapters(response.data.data);
+        const response = await axios.get('http://localhost:3000/api/v1/chapter/getChapters');
+        setChapters(response.data.message);
+        console.log(response.data.message);
       } catch (error) {
         console.error("Error fetching chapters:", error);
       }
