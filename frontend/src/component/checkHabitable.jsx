@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Stars, Text } from "@react-three/drei";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 
 const checkTemp = (temp,luminosity,semiMajorAxis) => {
@@ -87,8 +87,11 @@ const Planet = ({ radius, position, name, textureUrl, orbitRadius, temp, luminos
         }}
         onPointerOut={() => onHover(null)}
       >
-        <sphereGeometry args={[radius, 64, 64]} />
-        <meshStandardMaterial color={color} map={texture} emissive={color} emissiveIntensity={luminosity / 10} />
+        <sphereGeometry args={[radius, 64, 64]} /> 
+        { name === "Earth" ? <meshStandardMaterial  map={texture} /> :
+         <meshStandardMaterial color={color} map={texture} emissive={color} emissiveIntensity={luminosity / 10} />
+          
+        }
       </mesh>
       <Text
         position={[-5, radius + 0.5, 0]}
@@ -110,7 +113,7 @@ const Star = () => {
   useEffect(() => {
     const loader = new THREE.TextureLoader();
     loader.load(
-      "https://cors-anywhere.herokuapp.com/https://img.freepik.com/free-photo/top-view-tie-dye-cloth_23-2148778171.jpg?t=st=1727715841~exp=1727719441~hmac=cf278e693fd37be9944141459c342cbe05dbedd0750af61197e3c78cbe364a8b&w=1380",
+      "/Textureimg/sun.jpg",
       (loadedTexture) => {
         setTexture(loadedTexture);
       },
@@ -136,10 +139,39 @@ const Star = () => {
   );
 };
 
+const HabitableZone = ({ innerRadius, outerRadius }) => {
+  return (
+    <group>
+      <mesh rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[innerRadius, outerRadius, 64]} />
+        <meshBasicMaterial color="#00ff00" transparent opacity={0.1} side={THREE.DoubleSide} />
+      </mesh>
+      <Text
+        position={[0, 0.5, -innerRadius]}
+        fontSize={0.3}
+        color="green"
+        anchorX="center"
+        anchorY="middle"
+      >
+        Inner HZ
+      </Text>
+      <Text
+        position={[0, 0.5, -outerRadius]}
+        fontSize={0.3}
+        color="green"
+        anchorX="center"
+        anchorY="middle"
+      >
+        Outer HZ
+      </Text>
+    </group>
+  );
+};
+
 const Orbit = ({ radius }) => (
   <mesh rotation={[-Math.PI / 2, 0, 0]}>
-    <ringGeometry args={[radius, radius + 0.05, 64]} />
-    <meshBasicMaterial color="#ffffff" transparent opacity={0.3} side={THREE.DoubleSide} />
+    <ringGeometry args={[radius, radius + 0.1, 64]} />
+    <meshBasicMaterial color="#ffffff" transparent opacity={0.5} side={THREE.DoubleSide} />
   </mesh>
 );
 
@@ -209,22 +241,44 @@ const SolarSystem = ({ isAnimated, onHover }) => (
   </group>
 );
 
-const ExoplanetSystem = ({ planet, isAnimated, onHover }) => (
-  <group>
-    <Star />
-    <Orbit radius={planet.distance * 2} />
-    <Planet
-      name={planet.name}
-      radius={planet.radius * 0.3}
-      position={isAnimated ? [planet.distance * 0, 0, 0] : [planet.distance * 0, 0, 0]}
-      textureUrl="/Textureimg/exoplanet.jpg"
-      orbitRadius={isAnimated ? planet.distance * 2 : null}
-      temp={planet.temp}
-      luminosity={planet.luminosity}
-      onHover={onHover}
-    />
-  </group>
-);
+
+const ExoplanetSystem = ({ planet, isAnimated, onHover }) => {
+  const planetRef = useRef();
+  const starRef = useRef();
+
+   const innerHabitable = Math.sqrt(planet.luminosity * 0.95);
+   const outerHabitable = Math.sqrt(planet.luminosity * 1.4)+1.5;
+
+  useFrame(({ clock }) => {
+    if (isAnimated && planetRef.current) {
+      const angle = clock.getElapsedTime() * 0.5;
+      planetRef.current.position.x = Math.cos(angle) * planet.distance * 2;
+      planetRef.current.position.z = Math.sin(angle) * planet.distance * 2;
+    }
+    if (starRef.current) {
+      starRef.current.rotation.y += 0.007;
+    }
+  });
+
+  return (
+    <group>
+      <Star ref={starRef} />
+      <HabitableZone innerRadius={innerHabitable} outerRadius={outerHabitable} />
+      <Orbit radius={planet.distance * 2} />
+      <group ref={planetRef}>
+        <Planet
+          name={planet.name}
+          radius={planet.radius * 0.3}
+          position={[0, 0, 0]}
+          textureUrl="/Textureimg/exoplanet.jpg"
+          temp={planet.temp}
+          luminosity={planet.luminosity}
+          onHover={onHover}
+        />
+      </group>
+    </group>
+  );
+};
 
 const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
   const [planet, setPlanet] = useState({
@@ -244,7 +298,7 @@ const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
     distance: planet.distance,
     luminosity: planet.luminosity,
   });
-  const [isAnimated, setIsAnimated] = useState(false);
+  const [isAnimated, setIsAnimated] = useState(true);
   const [verdict, setVerdict] = useState(null);
   const [hoverInfo, setHoverInfo] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -345,11 +399,11 @@ const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
   };
 
   return (
-    <div className="container mx-auto p-4 relative">
+    <div className="container mx-auto p-4 relative h-screen font-Saira">
       <h1 className="text-3xl font-bold mb-4">Exoplanet Habitability Simulator</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 relative">
-        <div className="bg-gray-900 rounded-lg overflow-hidden relative" style={{ height: "400px" }}>
+      <div className="grid grid-cols-1 h-1/2 md:grid-cols-2 gap-4 mb-4 relative">
+        <div className="bg-gray-900 h-full rounded-lg overflow-hidden relative" >
           <Canvas camera={{ position: [0, 10, 20] }}>
             <ambientLight intensity={0.2} />
             <SolarSystem isAnimated={isAnimated} onHover={handlePlanetHover} />
@@ -357,7 +411,7 @@ const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
             <OrbitControls />
           </Canvas>
         </div>
-        <div className="bg-gray-900 rounded-lg overflow-hidden relative" style={{ height: "400px" }}>
+        <div className="bg-gray-900 rounded-lg overflow-hidden relative" >
           {verdict && <Verdict message={verdict} />}
           <Canvas camera={{ position: [0, 10, 20] }}>
             <ambientLight intensity={0.2} />
@@ -378,11 +432,11 @@ const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
         </div>
       )}
 
-      <div className="bg-blue-100 p-6 rounded-lg shadow-md relative">
+      <div className="bg-slate-800 border-slate-600 text-white border-2 p-6 rounded-lg shadow-md relative">
         <h2 className="text-2xl font-semibold mb-4">Exoplanet Parameters</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className=" grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-slate-200">
               Radius (Earth Radii): {editablePlanet.radius.toFixed(2)}
               {editablePlanet.radius < 0.5 && <span className="text-red-500"> - Too small!</span>}
               {editablePlanet.radius > 4 && <span className="text-red-500"> - Too big!</span>}
@@ -395,11 +449,11 @@ const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
               min="0.1"
               max="10"
               step="0.1"
-              className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+              className="w-full cursor-pointer range "
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-slate-200">
               Temperature (K): {editablePlanet.temp}
               {editablePlanet.temp < 210 && <span className="text-red-500"> - Too cold!</span>}
               {editablePlanet.temp > 340 && <span className="text-red-500"> - Too hot!</span>}
@@ -412,11 +466,11 @@ const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
               min="200"
               max="400"
               step="1"
-              className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+              className="w-full  cursor-pointer range"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className=" block text-sm font-medium text-slate-200">
               Distance from Star (AU): {editablePlanet.distance.toFixed(2)}
               {editablePlanet.distance < 0.95 && <span className="text-red-500"> - Too close!</span>}
               {editablePlanet.distance > 1.4 && <span className="text-red-500"> - Too far!</span>}
@@ -429,11 +483,11 @@ const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
               min="0.6"
               max="3"
               step="0.01"
-              className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+              className="w-full  cursor-pointer range"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-slate-200">
               Luminosity (Solar luminosity): {editablePlanet.luminosity.toFixed(2)}
             </label>
             <input
@@ -444,7 +498,7 @@ const ExoplanetGame3D = ({planetName ='bet Pic b'}) => {
               min="0.1"
               max="3"
               step="0.1"
-              className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+              className="w-full  cursor-pointer range"
             />
           </div>
         </div>

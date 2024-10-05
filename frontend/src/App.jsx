@@ -35,7 +35,7 @@ import Answer from './pages/Answer.jsx'
 import ChapterList from './component/EDTech/ChapterList.jsx'
 
 function App() {
-    // console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID)
+     console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID)
  
   return (
     <GoogleOAuthProvider clientId ={import.meta.env.VITE_GOOGLE_CLIENT_ID}>

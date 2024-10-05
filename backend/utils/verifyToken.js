@@ -21,7 +21,7 @@ const verifyToken = asyncHandler(async (token) => {
     image_url: payload.picture,
   }
 
-  console.log(user);
+  console.log("in verify token:",user);
 
   return user;
 });
