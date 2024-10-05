@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronUp, Plus, X } from 'lucide-react';
 import axiosInstance from '../utils/axiosInstance';
-import AnswerComponent from '../component/AnswerComponent';
 import { useParams } from 'react-router-dom';
 
 // Button component
@@ -127,16 +126,15 @@ const SidebarMenu = ({ selectedOption, setSelectedOption }) => {
 
 // Main StackOverflowAnswerPage component
 const StackOverflowAnswerPage = () => {
-    const params = useParams();
+  const params = useParams();
+  const questionId = params.questionId;
 
-    const questionId = params.questionId
-    console.log("question id: ",questionId)
-    const [selectedOption, setSelectedOption] = useState("questions");
-    const [question, setQuestion] = useState(null);
-    const [answers, setAnswers] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [newAnswer, setNewAnswer] = useState(null);
+  const [selectedOption, setSelectedOption] = useState("questions");
+  const [question, setQuestion] = useState(null);
+  const [answers, setAnswers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [newAnswerText, setNewAnswerText] = useState(''); // Added state for new answer text
 
   useEffect(() => {
     const fetchQuestionAndAnswers = async () => {
@@ -162,7 +160,6 @@ const StackOverflowAnswerPage = () => {
 
   const handleVote = async (answerId) => {
     try {
-      // Optimistically update the UI
       setAnswers(prevAnswers => prevAnswers.map(answer => {
         if (answer._id === answerId) {
           const newUpvotes = answer.isLiked ? answer.upvotes - 1 : answer.upvotes + 1;
@@ -175,13 +172,11 @@ const StackOverflowAnswerPage = () => {
         return answer;
       }));
 
-      // Send request to backend
       const response = await axiosInstance.post('/question/upvoteanswer', {
         questionId: questionId,
         answerId: answerId,
       });
-      
-      // Update with the response from the server to ensure consistency
+
       setAnswers(prevAnswers => prevAnswers.map(answer => {
         if (answer._id === answerId) {
           return {
@@ -194,7 +189,6 @@ const StackOverflowAnswerPage = () => {
       }));
     } catch (error) {
       console.error('Failed to upvote:', error);
-      // Revert the optimistic update if the request fails
       setAnswers(prevAnswers => prevAnswers.map(answer => {
         if (answer._id === answerId) {
           const newUpvotes = answer.isLiked ? answer.upvotes + 1 : answer.upvotes - 1;
@@ -211,29 +205,23 @@ const StackOverflowAnswerPage = () => {
 
   const handleSaveAnswer = async () => {
     if (!newAnswerText) return;
-  
+
     try {
-      // Add the new answer
       await axiosInstance.post('/question/addanswer', {
         questionId: questionId,
         text: newAnswerText,
       });
-  
-      // Fetch updated list of answers
+
       const updatedAnswersResponse = await axiosInstance.post('/question/getanswersbyquestion', {
         questionId: questionId
       });
-  
-      // Update the state with the newly fetched answers
+
       setAnswers(updatedAnswersResponse.data.answers);
-      
-      // Clear the input field
-      setNewAnswerText('');
+      setNewAnswerText(''); // Clear the input after saving
     } catch (error) {
       console.error('Failed to add answer and fetch updated answers:', error);
     }
   };
-  
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -255,32 +243,31 @@ const StackOverflowAnswerPage = () => {
                     onClick={() => handleVote(answer._id)} 
                     className={`hover:text-orange-500 ${answer.isLiked ? 'text-orange-500' : 'text-gray-500'}`}
                   >
-                    <ChevronUp size={36} />
+                    <ChevronUp size={24} />
                   </button>
-                  <span className="text-lg font-bold">{answer.upvotes}</span>
+                  <span className="text-lg">{answer.upvotes}</span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-gray-800">{answer.text}</p>
+                  <p>{answer.text}</p>
                 </div>
               </div>
             </div>
           ))}
 
-          {/* New Answer Section */}
           <div className="border-t pt-6">
             <h2 className="text-xl font-bold mb-4">Your Answer</h2>
             <textarea
-              className="w-full p-3 rounded-md border border-gray-300 focus:border-blue-300 focus:ring-blue-200 focus:ring-opacity-50"
               value={newAnswerText}
               onChange={(e) => setNewAnswerText(e.target.value)}
+              className="w-full border rounded-md p-3 mb-4"
               rows="4"
-              placeholder="Write your answer here..."
-            />
+              placeholder="Type your answer here..."
+            ></textarea>
             <Button
               onClick={handleSaveAnswer}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white mt-4"
+              className="bg-blue-600 hover:bg-blue-700 text-white w-full"
             >
-              Save Answer
+              Submit Answer
             </Button>
           </div>
         </div>
