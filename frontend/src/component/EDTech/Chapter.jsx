@@ -16,7 +16,7 @@ const ChapterComponent = ({ chapter }) => {
         const response = await axios.post('http://localhost:3000/api/v1/chapter/getsubChapters', { chapterId: chapter._id });
         
         // Sort subchapters by createdAt in descending order (newest first)
-        const sortedSubChapters = response.data.message.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const sortedSubChapters = response.data.message.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
         setSubChapters(sortedSubChapters);
         console.log(sortedSubChapters);

@@ -12,7 +12,7 @@ const ChapterList = () => {
         const response = await axios.get('http://localhost:3000/api/v1/chapter/getChapters');
         
         // Sort the chapters by createdAt in descending order (newest first)
-        const sortedChapters = response.data.message.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const sortedChapters = response.data.message.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
         
         setChapters(sortedChapters);
         console.log(sortedChapters);
