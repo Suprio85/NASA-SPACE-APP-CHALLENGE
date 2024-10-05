@@ -35,7 +35,7 @@ const addQuestion = async (req, res) => {
 
 
 const getLatestQuestions = async (req, res) => {
-    const userId = req.user.id; // assuming you have the authenticated user ID in req.user
+    const userId = req.user._id; // assuming you have the authenticated user ID in req.user
 
     try {
         // Find questions, sort by latest, and populate user details

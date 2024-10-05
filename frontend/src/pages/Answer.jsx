@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronUp, Plus, X } from 'lucide-react';
 import axiosInstance from '../utils/axiosInstance';
+import AnswerComponent from '../component/AnswerComponent';
+import { useParams } from 'react-router-dom';
 
 // Button component
 const Button = ({ children, onClick, className, type = "button", disabled = false }) => (
@@ -125,13 +127,16 @@ const SidebarMenu = ({ selectedOption, setSelectedOption }) => {
 
 // Main StackOverflowAnswerPage component
 const StackOverflowAnswerPage = () => {
-  const questionId = "66ffbc57be252159072fc57d";
-  const [selectedOption, setSelectedOption] = useState("questions");
-  const [question, setQuestion] = useState(null);
-  const [answers, setAnswers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [newAnswerText, setNewAnswerText] = useState('');
+    const params = useParams();
+
+    const questionId = params.questionId
+    console.log("question id: ",questionId)
+    const [selectedOption, setSelectedOption] = useState("questions");
+    const [question, setQuestion] = useState(null);
+    const [answers, setAnswers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [newAnswer, setNewAnswer] = useState(null);
 
   useEffect(() => {
     const fetchQuestionAndAnswers = async () => {
