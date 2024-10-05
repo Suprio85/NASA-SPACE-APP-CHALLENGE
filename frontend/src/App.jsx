@@ -32,6 +32,7 @@ import BlogPage from './pages/WriteBlog.jsx'
 import TestBlog from './pages/Blogpage.jsx'
 import Forum from './pages/Forum.jsx'
 import Answer from './pages/Answer.jsx'
+import ChapterList from './component/EDTech/ChapterList.jsx'
 
 function App() {
     // console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID)
@@ -61,13 +62,14 @@ function App() {
         <Route path='/transitsimulator' element={<TransitSimulator />} />
         <Route path='/directimagingdemo' element={<DirectImagingDemo />} />
         <Route path='/GravitationalMicrolensingSimulation' element={<GravitationalMicrolensingSimulation />} />
-        <Route path='/subchaptercontent' element={<SubchpaterContent />} />
+        <Route path='/subchaptercontent/:subChapterId' element={<SubchpaterContent />} />
         <Route path='/addquiz' element={<AddQuiz />} />
         <Route path='/quiz' element={<Quiz />} />
         <Route path='/blog' element={<BlogPage />} />
         <Route path='/testblog' element={< TestBlog />} />
         <Route path='/forum' element={<Forum />} />
         <Route path='/forum/answer/:questionId' element={<Answer />} />
+        <Route path='/chapter' element={<ChapterList />} />
       </Routes>
       </Router>
       </UserProvider>

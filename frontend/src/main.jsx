@@ -10,6 +10,6 @@ import ChapterList from './component/EDTech/ChapterList.jsx'
 
 createRoot(document.getElementById('root')).render(
   // <StrictMode>
-    <ChapterList />
+    <App />
   // </StrictMode>,
 )

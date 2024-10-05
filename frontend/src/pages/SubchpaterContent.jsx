@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
+import { useParams } from "react-router-dom";
 
 const SubchapterContent = () => {
+  const params = useParams();
+  const subChapterId = params.subChapterId;
   const [blocks, setBlocks] = useState([]);
   const [imageDimensions, setImageDimensions] = useState({}); // Single state for all images
   const imgRef = useRef(null); // Declare useRef outside
-
-  const subChapterId = "66ffbe63ededbf0e6f3837f6"; // Set subchapter id
 
   useEffect(() => {
     const fetchSubChapterContent = async () => {

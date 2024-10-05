@@ -1,17 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const ChapterComponent = ({ chapter }) => {
-
-  console.log(chapter);
-  
-    // chapter = {
-    //     _id: "1",
-    //     title: "Chapter 1",
-    //     content: "This is chapter 1",
-    // }
   const [isOpen, setIsOpen] = useState(false); // Control visibility of subchapters
   const [subChapters, setSubChapters] = useState([]);
+  const navigate = useNavigate(); // Initialize useNavigate for redirection
 
   const toggleSubChapters = async () => {
     setIsOpen(!isOpen);
@@ -20,12 +14,22 @@ const ChapterComponent = ({ chapter }) => {
     if (!subChapters.length && !isOpen) {
       try {
         const response = await axios.post('http://localhost:3000/api/v1/chapter/getsubChapters', { chapterId: chapter._id });
-        setSubChapters(response.data.message);
-        console.log(response.data.data.message);
+        
+        // Sort subchapters by createdAt in descending order (newest first)
+        const sortedSubChapters = response.data.message.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        setSubChapters(sortedSubChapters);
+        console.log(sortedSubChapters);
       } catch (error) {
         console.error("Error fetching subchapters:", error);
       }
     }
+  };
+
+  // Handle subchapter click and redirect to the SubchapterContent page
+  const handleSubChapterClick = (subChapterId) => {
+    console.log(subChapterId);
+    navigate(`/subchaptercontent/${subChapterId}`); // Redirect to the subchapter route with the subChapterId
   };
 
   return (
@@ -42,9 +46,12 @@ const ChapterComponent = ({ chapter }) => {
         <div className="mt-4">
           {subChapters.length > 0 ? (
             subChapters.map((subChapter) => (
-              <div key={subChapter._id} className="bg-gray-100 p-3 rounded mb-2">
+              <div
+                key={subChapter._id}
+                className="bg-gray-100 p-3 rounded mb-2 cursor-pointer"
+                onClick={() => handleSubChapterClick(subChapter._id)} // Redirect on click
+              >
                 <h3 className="text-lg font-medium text-gray-800">{subChapter.title}</h3>
-                <p className="text-gray-600">{subChapter.content}</p>
               </div>
             ))
           ) : (
