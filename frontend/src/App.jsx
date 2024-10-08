@@ -8,7 +8,6 @@ import JourneyWithorbit from './pages/journeyWithorbit'
 import ExoplanetPage from './pages/ShowAllPlanet'
 import StarPlanetPage from './pages/ShowAllStars'
 import SolarSystem from './component/animatedSolarSystem'
-import Planets from "./component/Planets"
 import TeacherBlog from './pages/TeacherBlog'
 import RadialVelocity from './pages/RadialVelocity'
 import TransitSimulator from './pages/TransitSimulation'
@@ -33,6 +32,11 @@ import TestBlog from './pages/Blogpage.jsx'
 import Forum from './pages/Forum.jsx'
 import Answer from './pages/Answer.jsx'
 import ChapterList from './component/EDTech/ChapterList.jsx'
+import ExoplanetGame3D from './component/checkHabitable.jsx'
+import Planets from './component/Planets.jsx'
+import Game from './pages/PlanetTypeGame.jsx'
+import ExoplanetCreator from './pages/ExoplanetCreator.jsx'
+
 
 function App() {
      console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID)
@@ -70,6 +74,10 @@ function App() {
         <Route path='/forum' element={<Forum />} />
         <Route path='/forum/answer/:questionId' element={<Answer />} />
         <Route path='/chapter' element={<ChapterList />} />
+        <Route path='/game' element={<Game />} />
+        <Route path='/exoplanetcreator' element={<ExoplanetCreator />} />
+        <Route path='/exoplanet3d' element ={<ExoplanetGame3D/>} />
+  
       </Routes>
       </Router>
       </UserProvider>

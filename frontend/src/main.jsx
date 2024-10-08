@@ -12,6 +12,6 @@ import ExoplanetCreator from './pages/ExoplanetCreator.jsx'
 
 createRoot(document.getElementById('root')).render(
   // <StrictMode>
-    <ExoplanetGame3D />
+    <App />
   // </StrictMode>,
 )
